@@ -1,0 +1,21 @@
+{
+    "name": "yiier/yii2-rbac",
+    "description": "RBAC Auth manager for Yii2",
+    "type": "yii2-extension",
+    "keywords": ["yii2","extension"],
+    "license": "BSD-4-Clause",
+    "authors": [
+        {
+            "name": "forecho",
+            "email": "caizhenghai@gmail.com"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "yiier\\rbac\\": "src"
+        }
+    }
+}
