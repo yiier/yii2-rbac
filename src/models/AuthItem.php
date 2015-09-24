@@ -6,6 +6,20 @@ use common\models\AuthTimes;
 use Yii;
 use yii\base\Exception;
 
+/**
+ * This is the model class for table "tbl_auth_item".
+ *
+ * @property string $name
+ * @property integer $type
+ * @property string $description
+ * @property string $ruleName
+ * @property string $data
+ *
+ * @property Item $item
+ *
+ * @author forecho <caizhenghai@gmail.com>
+ */
+
 class AuthItem extends \yii\db\ActiveRecord
 {
     /**
@@ -21,7 +35,7 @@ class AuthItem extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'auth_item';
+        return '{{%auth_item}}';
     }
 
     /**

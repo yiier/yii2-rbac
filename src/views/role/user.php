@@ -20,14 +20,14 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="col-xs-12">
                 <?php foreach ($user as $k => $v): ?>
                     <h5>
-                        <a href="#" class="btn btn-xs pinyin" title="<?= Yii::t('rbac', 'Check All') ?>">
+                        <a href="#" class="btn btn-xs assign-all-user" title="<?= Yii::t('rbac', 'Check All') ?>">
                             <?= $k ?>(<?= Yii::t('rbac', 'Click on the selection') ?>)
                         </a>
                     </h5>
                     <ul class="u-list">
                         <?php foreach ($v as $key => $val): ?>
                             <li rel="user-id" data-user_id="<?= $key ?>"
-                                class="user<?php if ($val['is_sel'] == 1) echo ' selected'; ?>">
+                                class="assign-user<?php if ($val['is_sel'] == 1) echo ' selected'; ?>">
                                 <?= $val['username'] ?>
                             </li>
                         <?php endforeach; ?>

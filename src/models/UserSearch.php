@@ -32,6 +32,11 @@ class UserSearch extends Model
         ];
     }
 
+    public static function findAll($class)
+    {
+
+    }
+
     /**
      * Create data provider for Assignment model.
      * @param  array $params

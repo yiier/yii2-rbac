@@ -3,7 +3,9 @@
 namespace yiier\rbac\controllers;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 use yiier\rbac\models\UserSearch;
+use yiier\rbac\Module;
 
 class UserController extends Controller
 {
@@ -18,6 +20,11 @@ class UserController extends Controller
     public function init()
     {
         parent::init();
+        $this->searchClass = Module::getInstance()->searchClass;
+        $this->idField = Module::getInstance()->idField;
+        $this->usernameField = Module::getInstance()->usernameField;
+        $this->userClassName = Module::getInstance()->userClassName;
+
         if ($this->userClassName === null) {
             $this->userClassName = Yii::$app->getUser()->identityClass;
             $this->userClassName = $this->userClassName ?: 'common\models\User';
@@ -93,4 +100,10 @@ class UserController extends Controller
         }
     }
 
+
+    public function findAll()
+    {
+        $class = $this->userClassName;
+        return ArrayHelper::map($class::find()->all(), 'id', $this->usernameField);
+    }
 }

@@ -3,6 +3,10 @@
 namespace yiier\rbac\helpers;
 
 use Yii;
+use yii\caching\TagDependency;
+use yiier\rbac\components\Configs;
+use yii\helpers\Inflector;
+use yii\helpers\VarDumper;
 
 class Files
 {
@@ -14,20 +18,19 @@ class Files
      * @param $namespaces
      * @return
      */
-    public static function getAllMethods($namespaces)
+    public function getAllMethods($namespaces)
     {
-        $namespaces = self::getClasses($namespaces);
+        $namespaces = $this->getClasses($namespaces);
         foreach ($namespaces as $k => $v) {
-            if (!is_array($v)) {
-                continue;
-            }
-            $namespace = $k . '\\controllers';
+            if (is_array($v)) {
+                $namespace = $k . '\\controllers';
 
-            $pre = strpos($k, '/') ? $k . self::$separate : $k . '/';
-            foreach ($v as $key => $val) {
-                $controller_namespace = $namespace . '\\' . $val . 'Controller';
-                $val = self::uper2lower($val);
-                $actions[$pre . $val] = self::getClassMethods($controller_namespace);
+                $pre = strpos($k, '/') ? $k . self::$separate : $k . '\\';
+                foreach ($v as $key => $val) {
+                    $controllerNamespace = $namespace . '\\' . $val . 'Controller';
+                    $val = self::uper2lower($val);
+                    $actions[$pre . $val] = self::getClassMethods($controllerNamespace);
+                }
             }
         }
         return $actions;
@@ -38,12 +41,12 @@ class Files
      * @param $namespaces
      * @return
      */
-    public static function getClasses($namespaces)
+    private function getClasses($namespaces)
     {
         foreach ($namespaces as $k => $v) {
+            $key = str_replace('\controllers', '', $v);
             $namespace = str_replace('\\', '/', $v);
             $dir = Yii::getAlias('@' . $namespace);
-            $key = str_replace('/controllers', '', $namespace);
             $classes[$key] = self::scan($dir);
         }
         return $classes;
@@ -56,7 +59,6 @@ class Files
      */
     public static function getClassMethods($controller)
     {
-
         $actions = [];
         $controller = str_replace('/', '\\', $controller);
         $class = new \ReflectionClass($controller);//建立反射类
@@ -91,8 +93,8 @@ class Files
         return $classes;
     }
 
-    public static function uper2lower($action_id)
+    public static function uper2lower($actionId)
     {
-        return ltrim(strtolower(preg_replace('/([A-Z])/', '-${1}', $action_id)), '-');
+        return ltrim(strtolower(preg_replace('/([A-Z])/', '-${1}', $actionId)), '-');
     }
 }

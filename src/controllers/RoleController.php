@@ -3,19 +3,17 @@
 namespace yiier\rbac\controllers;
 
 use  yiier\rbac\helpers\Pinyin;
+use yiier\rbac\helpers\Route;
 use  yiier\rbac\models\AuthItem;
 use  yiier\rbac\models\AuthItemSearch;
 use Yii;
-use common\models\User;
 use yii\rbac\Role;
 use yii\web\NotFoundHttpException;
 
 
 class RoleController extends Controller
 {
-
     public $auth;
-
 
     public function init()
     {
@@ -97,15 +95,14 @@ class RoleController extends Controller
      */
     public function actionUser($name)
     {
-        // 改过默认的
-        $users = User::find()->where([])->all();
+        $users = (new UserController('user', Yii::$app->module))->findAll();
         $usersInfo = [];
-        foreach ($users as $k => $v) {
-            $pin = strtoupper(substr(Pinyin::pinyin($v['username']), 0, 1));
-            $usersInfo[$pin][$v['id']] = [
-                'username' => $v['username'],
-                'pinyin' => Pinyin::pinyin($v['username']),
-                'is_sel' => $this->auth->getAssignment($name, $v['id']) ? 1 : 0
+        foreach ($users as $key => $value) {
+            $pin = strtoupper(substr(Pinyin::pinyin($value), 0, 1));
+            $usersInfo[$pin][$key] = [
+                'username' => $value,
+                'pinyin' => Pinyin::pinyin($value),
+                'is_sel' => $this->auth->getAssignment($name, $key) ? 1 : 0
             ];
         }
 
@@ -128,16 +125,16 @@ class RoleController extends Controller
             foreach ($userId as $k => $v) {
                 $this->auth->assign($role, $v);
             }
-            $this->ajaxReturn(null, null, 1);
+            return $this->ajaxReturn(null, null, 1);
         }
 
         if ($isSel == 'true') { //删除
             if ($this->auth->revoke($role, $userId)) {
-                $this->ajaxReturn(null, null, 1);
+                return $this->ajaxReturn(null, null, 1);
             }
         } else { //增加
             if ($this->auth->assign($role, $userId)) {
-                $this->ajaxReturn(null, null, 1);
+                return $this->ajaxReturn(null, null, 1);
             }
         }
     }
@@ -186,13 +183,13 @@ class RoleController extends Controller
                 $permissions = $auth->getPermission($v);
                 $auth->addChild($role, $permissions);
             }
-            $this->ajaxReturn(null, null, 200);
+            return $this->ajaxReturn(null, null, 200);
         }
 
         $method = ($isSel == 'true') ? 'removeChild' : 'addChild';
         $permissions = $auth->getPermission($id);
         $auth->$method($role, $permissions);
-        $this->ajaxReturn(null, null, 200);
+        return $this->ajaxReturn(null, null, 200);
     }
 
 
@@ -247,10 +244,9 @@ class RoleController extends Controller
     {
         $role = $this->auth->getRole($roleName);
         if ($role) {
-            $this->ajaxReturn($role, null, 1);
+            return $this->ajaxReturn($role, null, 1);
         } else {
-            $this->ajaxReturn(null, '角色不存在', 0);
+            return $this->ajaxReturn(null, '角色不存在', 0);
         }
-
     }
 }

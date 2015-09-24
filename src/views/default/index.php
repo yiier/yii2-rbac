@@ -43,10 +43,10 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <?php foreach ($val as $k => $v): ?>
                                         <div class="input-group">
                                             <span class="input-group-addon">
-                                                <input name="action" value="<?= $k ?>" type="checkbox" <?= (isset($v['check'])) ? 'checked' : ''; ?> class="action">
+                                                <input name="action" value="<?= $k ?>" type="checkbox" <?= ($v['check']) ? 'checked' : ''; ?> class="action permission-name">
                                             </span>
                                             <span class="input-group-addon bg-gray color-palette"><?= $v['action'] ?></span>
-                                            <input type="text" class="form-control action_des" value="<?= $v['des'] ?>">
+                                            <input type="text" class="form-control action-des" value="<?= $v['des'] ?>">
                                         </div>
                                         <br>
                                     <?php endforeach; ?>
