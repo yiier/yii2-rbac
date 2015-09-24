@@ -27,6 +27,12 @@ Usage
 
 Once the extension is installed, simply modify your application configuration as follows:
 
+Run
+
+```
+php yii migrate --migrationPath=@yii/rbac/migrations/
+```
+
 ```php
 return [
     'modules' => [
@@ -34,7 +40,8 @@ return [
             'class' => 'yiier\rbac\Module',
             // 'allowNamespaces' => [
             //    'yiier\rbac\controllers',
-            //    'api\controllers'
+            //    'api\controllers',
+            //    'api\modules\user\controllers',
             // ],
             // 'menus' => [
             //    'users' => 'User'
@@ -71,8 +78,12 @@ echo  Menu::widget(
                 'icon' => 'fa-dashboard',
                 'active' => Yii::$app->request->url === Yii::$app->homeUrl
             ],
-            \Yii::$app->getModule('rbac')->getInstance()->getItems()
+            \Yii::$app->getModule('rbac')->getInstance()->getItems() // add menu
         ]
     ]
 );
 ```
+
+> [Get√Yii](http://www.getyii.com)
+<i>Web development has never been so fun!</i>
+[www.getyii.com](http://www.getyii.com)
