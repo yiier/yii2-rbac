@@ -4,6 +4,7 @@ namespace yiier\rbac\components;
 
 use yii\web\ForbiddenHttpException;
 use Yii;
+use yii\base\Module;
 use yii\web\User;
 use yii\di\Instance;
 
@@ -68,4 +69,15 @@ class AccessControl extends \yii\base\ActionFilter
         }
     }
 
+    /**
+     * @inheritdoc
+     */
+    protected function isActive($action)
+    {
+        $uniqueId = $action->getUniqueId();
+        if ($uniqueId === Yii::$app->getErrorHandler()->errorAction) {
+            return false;
+        }
+        return true;
+    }
 }
