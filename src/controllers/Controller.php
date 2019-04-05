@@ -9,27 +9,25 @@ namespace yiier\rbac\controllers;
 
 use Yii;
 use yii\web\BadRequestHttpException;
-use yii\helpers\Url;
 
 class Controller extends \yii\web\Controller
 {
     public function init()
     {
         //判断是否登录
-        if (Yii::$app->user->isGuest)
-            $this->redirect(Url::toRoute('/site/login'));
+        if (Yii::$app->user->isGuest) {
+            $this->redirect(Yii::$app->user->loginUrl);
+        }
     }
 
     public function ajaxReturn($data = null, $info = '', $success = true)
     {
-        header('Content-type: application/json');
-        $all = [
+        return [
             'status' => $success,
             'info' => $info,
             'data' => $data,
             'csrf' => Yii::$app->request->getCsrfToken()
         ];
-        echo json_encode($all);
     }
 
     /**
@@ -47,7 +45,7 @@ class Controller extends \yii\web\Controller
             //判断是否是普通用户，如果是，跳到前台
             $role = $auth->getRolesByUser(Yii::$app->user->getId());
             $customerRole = $auth->getRole('customer');
-            if (isset($role['customer']) && $role['customer'] == $customerRole) {
+            if (isset($role['customer']) && $role['customer'] === $customerRole) {
                 Yii::$app->getSession()->setFlash('error', '非法操作');
                 $this->redirect('/');
             }

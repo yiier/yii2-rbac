@@ -18,6 +18,7 @@ return [
     'Permission' => '权限',
     'Permissions List' => '权限列表',
     'Please select need to accept access control functions.' => '请选择需要接受权限控制的功能。',
+    'Please select rule' => '请选择规则',
 
 
     'Avaliable' => '可用',
@@ -27,6 +28,7 @@ return [
     'Type' => '类型',
     'Description' => '描述',
     'Rule Name' => '规则名称',
+    'Permission Name' => '权限名称',
     'Data' => '数据',
     'Update Role' => '更新角色',
     'Delete' => '删除',
@@ -52,7 +54,6 @@ return [
     'Search' => '查询',
     'Reset' => '重置',
     'Update Menu' => '更新菜单',
-    'Menus' => '菜单列表',
     'Order' => '映射',
     'Class Name' => '类名',
     'Assignment' => '分配',

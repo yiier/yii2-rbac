@@ -2,13 +2,13 @@
 
 namespace yiier\rbac\controllers;
 
-use  yiier\rbac\helpers\Pinyin;
-use yiier\rbac\helpers\Route;
-use  yiier\rbac\models\AuthItem;
-use  yiier\rbac\models\AuthItemSearch;
 use Yii;
 use yii\rbac\Role;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
+use yiier\rbac\helpers\Pinyin;
+use yiier\rbac\models\AuthItem;
+use yiier\rbac\models\AuthItemSearch;
 
 
 class RoleController extends Controller
@@ -37,6 +37,7 @@ class RoleController extends Controller
     /**
      * 添加角色
      * @return mixed
+     * @throws \Exception
      */
     public function actionCreate()
     {
@@ -80,6 +81,7 @@ class RoleController extends Controller
      * Displays a single AuthItem model.
      * @param string $name
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionView($name)
     {
@@ -114,6 +116,7 @@ class RoleController extends Controller
      */
     public function actionAssign()
     {
+        Yii::$app->response->format = Response::FORMAT_JSON;
         $request = Yii::$app->request;
         $roleName = $request->post('role', '');
         $userId = $request->post('user_id', '');
@@ -169,6 +172,7 @@ class RoleController extends Controller
      */
     public function actionAssignPermissions()
     {
+        Yii::$app->response->format = Response::FORMAT_JSON;
         $auth = Yii::$app->authManager;
 
         $request = Yii::$app->request;
@@ -239,9 +243,11 @@ class RoleController extends Controller
     /**
      * @title 编辑角色
      * @param $roleName
+     * @return array
      */
     public function actionEdit($roleName)
     {
+        Yii::$app->response->format = Response::FORMAT_JSON;
         $role = $this->auth->getRole($roleName);
         if ($role) {
             return $this->ajaxReturn($role, null, 1);

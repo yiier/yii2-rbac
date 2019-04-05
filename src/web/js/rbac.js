@@ -1,25 +1,70 @@
 $(function () {
 
+    // 添加权限
+    function createPermission(permission, des, check, rule_name) {
+        var url = $('.permission-url').attr('href');
+        $.get(url, {permission: permission, des: des, check: check, rule_name: rule_name}, function (e) {
+        }, 'json');
+    }
+
     // 加入 权限列表
-    $('.action').click(function (e) {
+    $('.permission-action').click(function () {
         var action = $(this).val();
         var check = $(this).is(":checked");
-        var url = $('.permission').attr('href');
-        var des = $(this).parent('span').prev('.action-des').val();
-        createPermission(action, des, check);
+        var des = $(this).parent('span').prev('.permission-action-des').val();
+        var rule_name = $(this).parent('span').prev('.permission-action-rule_name').val();
+        createPermission(action, des, check, rule_name);
     });
-    // 权限描述
-    $('.action-des').blur(function () {
+
+    // 添加 权限描述、rule path
+    $('.permission-action-rule_name, .permission-action-des').blur(function () {
         var permission = $(this).parent().find('.permission-name');
         var action = permission.val();
-        var des = $(this).val();
+        var des = $(this).parent().find(".action-des").val();
+        var rule_name = $(this).parent().find(".permission-action-rule_name").val();
         permission.attr('checked', 'checked');
-        createPermission(action, des, true);
+        createPermission(action, des, true, rule_name);
     });
+
     // 添加权限
-    function createPermission(action, des, check) {
-        var url = $('.permission').attr('href');
-        $.get(url, {permission: action, des: des, check: check}, function (e) {
+    function createRule(check, class_name, name) {
+        var url = $('.rule-url').attr('href');
+        $.get(url, {name: name, check: check, class_name: class_name}, function (e) {
+        }, 'json');
+    }
+
+    // 加入 权限列表
+    $('.rule-class_name').click(function () {
+        var class_name = $(this).val();
+        var check = $(this).is(":checked");
+        var name = $(this).siblings('.rule-action-name').val();
+        createRule(check, class_name, name);
+    });
+
+    // 添加 权限描述、rule path
+    $('.rule-action-name').blur(function () {
+        var name = $(this).val();
+        var class_name_node = $(this).siblings('.rule-class_name');
+        class_name_node.attr('checked', 'checked');
+        createRule(true, class_name_node.val(), name);
+    });
+
+
+    function roleAssignPermission(id, is_sel) {
+        var role = $('input[name=role_name]').val();
+        var url = $('.role-assign').attr('href');
+        var csrf = $('input[name=csrf]').val();
+        $.post(url, {role: role, id: id, _csrf: csrf, is_sel: is_sel}, function (xhr) {
+            $('input[name=csrf]').val(xhr.csrf);
+            if (xhr.status) {
+                if (Array.isArray(id)) {
+                    for (u in id) {
+                        $('li[data-id="' + id[u] + '"]').addClass('selected');
+                    }
+                } else {
+                    $('li[data-id="' + id + '"]').toggleClass('selected');
+                }
+            }
         }, 'json');
     }
 
@@ -41,19 +86,19 @@ $(function () {
         }
     });
 
-    function roleAssignPermission(id, is_sel) {
+    function roleAssign(user_id, is_sel) {
         var role = $('input[name=role_name]').val();
         var url = $('.role-assign').attr('href');
         var csrf = $('input[name=csrf]').val();
-        $.post(url, {role: role, id: id, _csrf: csrf, is_sel: is_sel}, function (xhr) {
+        $.post(url, {role: role, user_id: user_id, _csrf: csrf, is_sel: is_sel}, function (xhr) {
             $('input[name=csrf]').val(xhr.csrf);
             if (xhr.status) {
-                if (Array.isArray(id)) {
-                    for (u in id) {
-                        $('li[data-id="' + id[u] + '"]').addClass('selected');
+                if (isNaN(user_id)) {
+                    for (u in user_id) {
+                        $('li[data-user_id=' + user_id[u] + ']').addClass('selected');
                     }
                 } else {
-                    $('li[data-id="' + id + '"]').toggleClass('selected');
+                    $('li[data-user_id=' + user_id + ']').toggleClass('selected');
                 }
             }
         }, 'json');
@@ -78,37 +123,17 @@ $(function () {
         }
     });
 
-    function roleAssign(user_id, is_sel) {
-        var role = $('input[name=role_name]').val();
-        var url = $('.role-assign').attr('href');
-        var csrf = $('input[name=csrf]').val();
-        $.post(url, {role: role, user_id: user_id, _csrf: csrf, is_sel: is_sel}, function (xhr) {
-            $('input[name=csrf]').val(xhr.csrf);
-            if (xhr.status) {
-                if (isNaN(user_id)) {
-                    for (u in user_id) {
-                        $('li[data-user_id=' + user_id[u] + ']').addClass('selected');
-                    }
-                } else {
-                    $('li[data-user_id=' + user_id + ']').toggleClass('selected');
-                }
-            }
-        }, 'json');
-    }
 
-    $("#collapsed-setting").on("click", function () {
-        var that = $(".collapsed");
-        var btn = $(".btn-box-tool i");
-        var setting = $("#collapsed-setting i");
-        if (that.hasClass("collapsed-box")) {
-            that.removeClass("collapsed-box");
-            btn.removeClass("fa-plus").addClass("fa-minus");
-            setting.removeClass("fa-plus").addClass("fa-minus");
+    $("#tree-view .collapsed").on("click", function () {
+        var that = $(this);
+        if (that.siblings("ul").hasClass("hidden")) {
+            that.siblings("ul").removeClass("hidden");
+            that.siblings("ul").addClass("show");
+            that.removeClass("fa-plus").addClass("fa-minus");
         } else {
-            that.addClass("collapsed-box");
-            btn.removeClass("fa-minus").addClass("fa-plus");
-            setting.removeClass("fa-minus").addClass("fa-plus");
+            that.siblings("ul").removeClass("show");
+            that.siblings("ul").addClass("hidden");
+            that.removeClass("fa-minus").addClass("fa-plus");
         }
     });
-
 });

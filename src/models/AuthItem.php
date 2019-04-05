@@ -2,24 +2,20 @@
 
 namespace yiier\rbac\models;
 
-use common\models\AuthTimes;
 use Yii;
-use yii\base\Exception;
 
 /**
- * This is the model class for table "tbl_auth_item".
+ * This is the model class for table "{{%auth_item}}".
  *
  * @property string $name
  * @property integer $type
  * @property string $description
- * @property string $ruleName
+ * @property string $rule_name
  * @property string $data
  *
- * @property Item $item
  *
  * @author forecho <caizhenghai@gmail.com>
  */
-
 class AuthItem extends \yii\db\ActiveRecord
 {
     /**
@@ -84,33 +80,11 @@ class AuthItem extends \yii\db\ActiveRecord
         ];
     }
 
-    /**
-     * 次数
-     * @return \yii\db\ActiveQuery
-     */
-    public function getAuthTimes()
-    {
-        return $this->hasOne(AuthTimes::className(), ['name' => 'name',])
-            ->onCondition([AuthTimes::tableName() . '.type' => 1]);
-    }
-
-    /**
-     * 查找角色
-     * @param $name
-     * @return bool|void
-     */
-    public function findRole($name)
-    {
-        if (($role = Yii::$app->getAuthManager()->getRole($name)) !== null) {
-            return $role;
-        }
-        return false;
-    }
 
     /**
      * 添加角色
      * @return bool
-     * @throws Exception
+     * @throws \Exception
      */
     public function createRole()
     {
@@ -132,7 +106,7 @@ class AuthItem extends \yii\db\ActiveRecord
      * 更新角色
      * @param $name
      * @return bool
-     * @throws Exception
+     * @throws \Exception
      */
     public function updateRole($name)
     {

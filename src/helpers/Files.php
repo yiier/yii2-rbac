@@ -3,10 +3,6 @@
 namespace yiier\rbac\helpers;
 
 use Yii;
-use yii\caching\TagDependency;
-use yiier\rbac\components\Configs;
-use yii\helpers\Inflector;
-use yii\helpers\VarDumper;
 
 class Files
 {
@@ -16,10 +12,12 @@ class Files
     /**
      * @title 取得所有方法
      * @param $namespaces
-     * @return
+     * @return array
+     * @throws \ReflectionException
      */
     public function getAllMethods($namespaces)
     {
+        $actions = [];
         $namespaces = $this->getClasses($namespaces);
         foreach ($namespaces as $k => $v) {
             if (is_array($v)) {
@@ -39,10 +37,11 @@ class Files
     /**
      * @title 取得某命名空间下的所有类
      * @param $namespaces
-     * @return
+     * @return array
      */
     private function getClasses($namespaces)
     {
+        $classes = [];
         foreach ($namespaces as $k => $v) {
             $key = str_replace('\controllers', '', $v);
             $namespace = str_replace('\\', '/', $v);
@@ -56,6 +55,7 @@ class Files
      * @title 取得一个类的所有公共方法
      * @param $controller
      * @return array
+     * @throws \ReflectionException
      */
     public static function getClassMethods($controller)
     {
@@ -65,7 +65,8 @@ class Files
         $methods = $class->getMethods(\ReflectionMethod::IS_PUBLIC);
         $filter = ['actions', 'behaviors'];
         foreach ($methods as $method) {
-            if ($method->class == $controller && strpos($method->name, "action") === 0 && !in_array($method->name, $filter)) {
+            if ($method->class == $controller && strpos($method->name, "action") === 0 && !in_array($method->name,
+                    $filter)) {
                 preg_match('/\* @title(.*)/', $method->getDocComment(), $matches);
                 $key = substr($method->name, 0, 6) == 'action' ? substr($method->name, 6) : $method->name;
                 $key = self::uper2lower($key);
@@ -96,5 +97,26 @@ class Files
     public static function uper2lower($actionId)
     {
         return ltrim(strtolower(preg_replace('/([A-Z])/', '-${1}', $actionId)), '-');
+    }
+
+    /**
+     * get php file className
+     * @param $filename
+     * @return string
+     */
+    public static function getClassFromFile($filename)
+    {
+        $lines = file($filename);
+        $namespaces = preg_grep('/^namespace /', $lines);
+        $namespaceLine = array_shift($namespaces);
+        $match = [];
+        preg_match('/^namespace (.*);$/', $namespaceLine, $match);
+        $fullNamespace = array_pop($match);
+
+        $directoriesAndFilename = explode('/', $filename);
+        $filename = array_pop($directoriesAndFilename);
+        $nameAndExtension = explode('.', $filename);
+        $className = array_shift($nameAndExtension);
+        return $fullNamespace . '\\' . $className;
     }
 }
