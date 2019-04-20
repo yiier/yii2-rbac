@@ -41,7 +41,7 @@ class AuthItem extends \yii\db\ActiveRecord
     {
         return [
             [['name', 'type'], 'required'],
-            ['name', 'match', 'pattern' => '/^[a-zA-Z0-9_-]+$/'],
+            ['name', 'unique'],
             [['type', 'created_at', 'updated_at'], 'integer'],
             [['description', 'data'], 'string'],
             [['name', 'rule_name'], 'string', 'max' => 64],
@@ -70,13 +70,13 @@ class AuthItem extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'name' => Yii::t('app', 'Keyword'),
-            'type' => Yii::t('app', 'Type'),
-            'description' => Yii::t('app', 'Role Name'),
-            'rule_name' => Yii::t('app', 'Rule Name'),
-            'data' => Yii::t('app', 'Data'),
-            'created_at' => Yii::t('app', 'Created At'),
-            'updated_at' => Yii::t('app', 'Updated At'),
+            'name' => Yii::t('rbac', 'Role Name'),
+            'type' => Yii::t('rbac', 'Type'),
+            'description' => Yii::t('rbac', 'Description'),
+            'rule_name' => Yii::t('rbac', 'Rule Name'),
+            'data' => Yii::t('rbac', 'Data'),
+            'created_at' => Yii::t('rbac', 'Created At'),
+            'updated_at' => Yii::t('rbac', 'Updated At'),
         ];
     }
 

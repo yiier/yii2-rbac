@@ -40,9 +40,8 @@ class PermissionController extends Controller
             $ruleName = $request->get('rule_name') ? $request->get('rule_name') : null;
             $check = $request->get('check');
             if (empty($permission)) {
-                return $this->ajaxReturn(null, Yii::t('rbac', 'permission not found'), false);
+                return $this->ajaxReturn(false, Yii::t('rbac', 'permission not found'));
             }
-            $message = Yii::t('rbac', 'permission save error');
             $success = false;
             try {
                 $auth = Yii::$app->authManager;
@@ -61,10 +60,11 @@ class PermissionController extends Controller
                     $per = $auth->getPermission($permission);
                     $success = $auth->remove($per);
                 }
+                $message = Yii::t('rbac', 'successfully updated');
             } catch (\Exception $e) {
-                $message = $e->getMessage();
+                $message = Yii::t('rbac', 'permission save error');
             }
-            return $this->ajaxReturn(null, $message, $success);
+            return $this->ajaxReturn($success, $message);
         }
         throw new NotFoundHttpException();
     }

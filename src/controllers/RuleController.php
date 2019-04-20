@@ -40,7 +40,7 @@ class RuleController extends Controller
             $name = $request->get('name');
             $check = $request->get('check');
             if (empty($className)) {
-                return $this->ajaxReturn(null, Yii::t('rbac', 'permission not found'), false);
+                return $this->ajaxReturn(false, Yii::t('rbac', 'permission not found'));
             }
             $success = false;
             try {
@@ -56,10 +56,11 @@ class RuleController extends Controller
                 } else {
                     $success = AuthRule::findOne($name)->delete();
                 }
+                $message = Yii::t('rbac', 'successfully updated');
             } catch (\Exception $e) {
-                $message = $e->getMessage();
+                $message = Yii::t('rbac', 'permission save error');
             }
-            return $this->ajaxReturn(null, isset($message) ? $message : '', $success);
+            return $this->ajaxReturn($success, $message);
         }
         throw new NotFoundHttpException();
     }

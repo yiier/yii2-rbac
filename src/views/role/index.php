@@ -1,33 +1,56 @@
 <?php
 
+use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 
 /**
  * @var yii\web\View $this
  * @var yii\data\ActiveDataProvider $dataProvider
- * @var common\models\SearchUser $searchModel
+ * @var \yiier\rbac\models\AuthItem $searchModel
  */
 
 $this->title = Yii::t('rbac', 'Roles');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="page-content">
+<div class="box">
 
-    <div class="page-content-area">
+
+    <div class="box-body">
         <p>
             <?= Html::a(Yii::t('rbac', 'Create Role'), ['create'], ['class' => 'btn btn-success']) ?>
         </p>
 
+        <div class="search-form">
+
+            <?php $form = ActiveForm::begin([
+                'layout' => 'inline',
+                'method' => 'get',
+                'action' => ['index']
+            ]); ?>
+            <?= $form->field($searchModel, 'name')->textInput(['placeholder' => Yii::t('rbac', 'Role Name')]) ?>
+
+            <div class="form-group">
+                <?= Html::submitButton(Yii::t('rbac', 'Search'), ['class' => 'btn btn-primary']) ?>
+                <?= Html::a(Yii::t('rbac', 'Reset'), ['index'], ['class' => 'btn btn-default']) ?>
+            </div>
+
+        </div>
+        <?php ActiveForm::end(); ?>
+
+
         <?= \yii\grid\GridView::widget([
             'dataProvider' => $dataProvider,
-            'filterModel' => $searchModel,
+            'layout' => "{items}\n{summary}\n{pager}",
+            'options' => [
+                'class' => 'grid-view table-responsive rbac-grid'
+            ],
             'columns' => [
                 'name',
                 'description',
                 'created_at:datetime',
                 'updated_at:datetime',
                 [
-                    'header' => Yii::t('app', 'Actions'),
+                    'header' => Yii::t('rbac', 'Actions'),
                     'class' => 'yiier\rbac\widgets\ActionColumn',
                     'template' => '{update} {assign-permissions}  {assign-user} {delete}',
                     'buttons' => [

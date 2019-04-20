@@ -20,13 +20,12 @@ class Controller extends \yii\web\Controller
         }
     }
 
-    public function ajaxReturn($data = null, $info = '', $success = true)
+    public function ajaxReturn($success = true, $message = '', $data = '')
     {
         return [
             'status' => $success,
-            'info' => $info,
+            'message' => $message,
             'data' => $data,
-            'csrf' => Yii::$app->request->getCsrfToken()
         ];
     }
 

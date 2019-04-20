@@ -2,7 +2,7 @@
 
 use yii\helpers\Url;
 
-$this->title = Yii::t('rbac', 'Permissions List');
+$this->title = Yii::t('rbac', 'Rules');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
@@ -10,7 +10,10 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="box-group" id="accordion">
     <div class="alert alert-info">
         <p>
-            <?= Yii::t('rbac', 'Please select need to accept access control functions.') ?>
+            <span href="javascript:;" id="collapsed-setting">
+                <i class="fa fa-check"></i>
+            </span>
+            <?= Yii::t('rbac', 'Please select the rule you want to use.') ?>
         </p>
     </div>
     <!-- PAGE CONTENT BEGINS -->

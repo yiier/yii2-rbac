@@ -4,7 +4,7 @@ return [
     'Users' => '用户列表',
     'User' => '用户',
     'User Permissions' => '用户权限',
-    'Only accept English letters' => '只接受英文字母',
+    'Must be unique' => '必须唯一',
     'Create' => '新增',
     'Update' => '更新',
     'Roles' => '角色列表',
@@ -18,8 +18,11 @@ return [
     'Permission' => '权限',
     'Permissions List' => '权限列表',
     'Please select need to accept access control functions.' => '请选择需要接受权限控制的功能。',
+    'Please select the rule you want to use.' => '请选择你要使用的规则。',
     'Please select rule' => '请选择规则',
-
+    'Actions' => '操作',
+    'successfully updated' => '操作成功',
+    'Delete success' => '删除成功',
 
     'Avaliable' => '可用',
     'Assigned' => '分配',
@@ -40,6 +43,7 @@ return [
     'Update Permission' => '更新权限',
     'Permissions' => '权限列表',
     'Create Permission' => '新增权限',
+    'View Permission' => '查看权限',
     'Create Permissions' => '新增权限列表',
     'Routes' => '路由列表',
     'Create route' => '新增路由',
@@ -59,7 +63,9 @@ return [
     'Assignment' => '分配',
     'Role' => '角色',
     'Rule' => '规则',
-    'Menu' => '菜单',
-    'Help' => '帮助',
-    'Application' => '应用',
+    'No Data' => '没有数据',
+
+    'Role Name' => '角色名',
+    'Created At' => '创建时间',
+    'Updated At' => '更新时间',
 ];

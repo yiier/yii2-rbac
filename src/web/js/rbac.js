@@ -20,7 +20,7 @@ $(function () {
     $('.permission-action-rule_name, .permission-action-des').blur(function () {
         var permission = $(this).parent().find('.permission-name');
         var action = permission.val();
-        var des = $(this).parent().find(".action-des").val();
+        var des = $(this).val();
         var rule_name = $(this).parent().find(".permission-action-rule_name").val();
         permission.attr('checked', 'checked');
         createPermission(action, des, true, rule_name);

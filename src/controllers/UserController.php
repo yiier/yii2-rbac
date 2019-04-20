@@ -4,6 +4,8 @@ namespace yiier\rbac\controllers;
 
 use Yii;
 use yii\helpers\ArrayHelper;
+use yii\rbac\Assignment;
+use yii\web\NotFoundHttpException;
 use yiier\rbac\models\UserSearch;
 use yiier\rbac\Module;
 
@@ -45,7 +47,12 @@ class UserController extends Controller
             $searchModel = new $class;
         }
 
-        $dataProvider = $searchModel->search(\Yii::$app->request->getQueryParams(), $this->userClassName, $this->usernameField);
+        $dataProvider = $searchModel->search(
+            \Yii::$app->request->getQueryParams(),
+            $this->userClassName,
+            $this->usernameField,
+            $this->idField
+        );
 
         return $this->render('index', [
             'dataProvider' => $dataProvider,
@@ -59,6 +66,7 @@ class UserController extends Controller
      * Displays a single Assignment model.
      * @param  integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionView($id)
     {

@@ -28,6 +28,7 @@ class RoleController extends Controller
     {
         $searchModel = new AuthItemSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->get(), AuthItem::TYPE_ROLE);
+
         return $this->render('index', [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
@@ -67,8 +68,8 @@ class RoleController extends Controller
         $model->type = AuthItem::TYPE_ROLE;
         if ($model->load(Yii::$app->request->post())) {
             if ($model->updateRole($name)) {
-                Yii::$app->session->setFlash('success', " '$model->name' " . Yii::t('app', 'successfully updated'));
-                return $this->redirect(['view', 'name' => $name]);
+                Yii::$app->session->setFlash('success', " '$model->name' " . Yii::t('rbac', 'successfully updated'));
+                return $this->redirect('index');
             }
         }
         return $this->render('update', [
@@ -128,16 +129,16 @@ class RoleController extends Controller
             foreach ($userId as $k => $v) {
                 $this->auth->assign($role, $v);
             }
-            return $this->ajaxReturn(null, null, 1);
+            return $this->ajaxReturn();
         }
 
         if ($isSel == 'true') { //删除
             if ($this->auth->revoke($role, $userId)) {
-                return $this->ajaxReturn(null, null, 1);
+                return $this->ajaxReturn();
             }
         } else { //增加
             if ($this->auth->assign($role, $userId)) {
-                return $this->ajaxReturn(null, null, 1);
+                return $this->ajaxReturn();
             }
         }
     }
@@ -187,13 +188,13 @@ class RoleController extends Controller
                 $permissions = $auth->getPermission($v);
                 $auth->addChild($role, $permissions);
             }
-            return $this->ajaxReturn(null, null, 200);
+            return $this->ajaxReturn();
         }
 
         $method = ($isSel == 'true') ? 'removeChild' : 'addChild';
         $permissions = $auth->getPermission($id);
         $auth->$method($role, $permissions);
-        return $this->ajaxReturn(null, null, 200);
+        return $this->ajaxReturn();
     }
 
 
@@ -250,9 +251,9 @@ class RoleController extends Controller
         Yii::$app->response->format = Response::FORMAT_JSON;
         $role = $this->auth->getRole($roleName);
         if ($role) {
-            return $this->ajaxReturn($role, null, 1);
+            return $this->ajaxReturn(true, '', $role);
         } else {
-            return $this->ajaxReturn(null, '角色不存在', 0);
+            return $this->ajaxReturn(false, '角色不存在');
         }
     }
 }

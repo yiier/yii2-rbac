@@ -12,7 +12,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="alert alert-info">
         <p>
             <span href="javascript:;" id="collapsed-setting">
-                <i class="fa fa-plus"></i>
+                <i class="fa fa-check"></i>
             </span>
             <?= Yii::t('rbac', 'Please select need to accept access control functions.') ?>
         </p>
