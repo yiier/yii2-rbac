@@ -16,11 +16,21 @@ $(function () {
         createPermission(action, des, check, rule_name);
     });
 
-    // 添加 权限描述、rule path
-    $('.permission-action-rule_name, .permission-action-des').blur(function () {
+    // 添加 权限描述
+    $('.permission-action-des').blur(function () {
         var permission = $(this).parent().find('.permission-name');
         var action = permission.val();
         var des = $(this).val();
+        var rule_name = $(this).parent().find(".permission-action-rule_name").val();
+        permission.attr('checked', 'checked');
+        createPermission(action, des, true, rule_name);
+    });
+
+    // 添加 rule path
+    $('.permission-action-rule_name').change(function () {
+        var permission = $(this).parent().find('.permission-name');
+        var action = permission.val();
+        var des = $(this).parent().find(".permission-action-des").val();
         var rule_name = $(this).parent().find(".permission-action-rule_name").val();
         permission.attr('checked', 'checked');
         createPermission(action, des, true, rule_name);
@@ -41,7 +51,7 @@ $(function () {
         createRule(check, class_name, name);
     });
 
-    // 添加 权限描述、rule path
+    // 添加 权限描述
     $('.rule-action-name').blur(function () {
         var name = $(this).val();
         var class_name_node = $(this).siblings('.rule-class_name');

@@ -17,13 +17,10 @@ class Module extends \yii\base\Module
      */
     public $mainLayout = '@yiier/rbac/views/layout.php';
 
-    private $defaultMenus = [
-        'rbac' => '权限系统',
-        'permissions' => '权限列表',
-        'roles' => '角色列表',
-        'users' => '用户列表',
-        'rules' => '规则列表',
-    ];
+    /**
+     * @var array
+     */
+    private $defaultMenus = [];
 
     // users
     public $userClassName;
@@ -41,6 +38,13 @@ class Module extends \yii\base\Module
             ];
         }
         RbacAsset::register(Yii::$app->view);
+        $this->defaultMenus = [
+            'rbac' => Yii::t('rbac', 'RBAC'),
+            'permissions' => Yii::t('rbac', 'Permissions'),
+            'roles' => Yii::t('rbac', 'Roles'),
+            'users' => Yii::t('rbac', 'Users'),
+            'rules' => Yii::t('rbac', 'Rules'),
+        ];
         $this->menus = array_merge($this->menus, $this->defaultMenus);
     }
 
