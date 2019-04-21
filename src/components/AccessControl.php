@@ -2,11 +2,10 @@
 
 namespace yiier\rbac\components;
 
-use yii\web\ForbiddenHttpException;
 use Yii;
-use yii\base\Module;
-use yii\web\User;
 use yii\di\Instance;
+use yii\web\ForbiddenHttpException;
+use yii\web\User;
 
 class AccessControl extends \yii\base\ActionFilter
 {
@@ -18,6 +17,7 @@ class AccessControl extends \yii\base\ActionFilter
     /**
      * Get user
      * @return User
+     * @throws \yii\base\InvalidConfigException
      */
     public function getUser()
     {
@@ -38,15 +38,18 @@ class AccessControl extends \yii\base\ActionFilter
 
     /**
      * @inheritdoc
+     * @throws \yii\base\InvalidConfigException
+     * @throws ForbiddenHttpException
      */
     public function beforeAction($action)
     {
         $user = $this->getUser();
+
         $controllerId = $action->controller->id;
         $moduleId = $action->controller->module->uniqueId ? '@' . $action->controller->module->uniqueId : '';
-
         $app = explode('\\', get_class(Yii::$app->controller));
         $permissionName = "{$app[0]}{$moduleId}_{$controllerId}_{$action->id}";
+
         if (Yii::$app->authManager->getPermission($permissionName)) {
             if (Yii::$app->user->can($permissionName)) {
                 return true;
@@ -57,7 +60,7 @@ class AccessControl extends \yii\base\ActionFilter
     }
 
     /**
-     * @param $user
+     * @param User $user
      * @throws ForbiddenHttpException
      */
     protected function denyAccess($user)

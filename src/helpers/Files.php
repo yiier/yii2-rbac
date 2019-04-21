@@ -22,12 +22,17 @@ class Files
         foreach ($namespaces as $k => $v) {
             if (is_array($v)) {
                 $namespace = $k . '\\controllers';
-
-                $pre = strpos($k, '/') ? $k . self::$separate : $k . '\\';
+                $firstPrefix = '';
+                if (strpos($k, '\\') !== false) {
+                    $prefixArray = explode('\\', $k);
+                    $firstPrefix = end($prefixArray) . '/';
+                }
                 foreach ($v as $key => $val) {
                     $controllerNamespace = $namespace . '\\' . $val . 'Controller';
                     $val = self::uper2lower($val);
-                    $actions[$pre . $val] = self::getClassMethods($controllerNamespace);
+                    $prefix = $firstPrefix . $val;
+                    $classMethods = self::getClassMethods($controllerNamespace, $prefix);
+                    $classMethods ? $actions[$k . '\\' . $val] = $classMethods : null;
                 }
             }
         }
@@ -53,24 +58,31 @@ class Files
 
     /**
      * @title 取得一个类的所有公共方法
-     * @param $controller
+     * @param string $controller
+     * @param string $prefix
      * @return array
      * @throws \ReflectionException
      */
-    public static function getClassMethods($controller)
+    public static function getClassMethods($controller, $prefix)
     {
         $actions = [];
         $controller = str_replace('/', '\\', $controller);
         $class = new \ReflectionClass($controller);//建立反射类
         $methods = $class->getMethods(\ReflectionMethod::IS_PUBLIC);
-        $filter = ['actions', 'behaviors'];
         foreach ($methods as $method) {
-            if ($method->class == $controller && strpos($method->name, "action") === 0 && !in_array($method->name,
-                    $filter)) {
+            $name = $method->getName();
+            if ($method->class == $controller &&
+                !$method->isStatic() &&
+                strpos($name, 'action') === 0 &&
+                $name !== 'actions'
+            ) {
                 preg_match('/\* @title(.*)/', $method->getDocComment(), $matches);
-                $key = substr($method->name, 0, 6) == 'action' ? substr($method->name, 6) : $method->name;
-                $key = self::uper2lower($key);
-                $actions[$key] = isset($matches[1]) ? trim($matches[1]) : '';
+                $name = strtolower(preg_replace('/(?<![A-Z])[A-Z]/', ' \0', substr($name, 6)));
+                $id = "/{$prefix}/" . ltrim(str_replace(' ', '-', $name), '-');
+                $actions[$id] = isset($matches[1]) ? trim($matches[1]) : '';
+//                $key = substr($method->name, 0, 6) == 'action' ? substr($method->name, 6) : $method->name;
+//                $key = self::uper2lower($key);
+//                $actions[$key] = isset($matches[1]) ? trim($matches[1]) : '';
             }
         }
         return $actions;

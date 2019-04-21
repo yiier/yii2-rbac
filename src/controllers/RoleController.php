@@ -6,6 +6,7 @@ use Yii;
 use yii\rbac\Role;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
+use yiier\rbac\helpers\AuthHelper;
 use yiier\rbac\helpers\Pinyin;
 use yiier\rbac\models\AuthItem;
 use yiier\rbac\models\AuthItemSearch;
@@ -26,6 +27,9 @@ class RoleController extends Controller
      */
     public function actionIndex()
     {
+        var_dump(AuthHelper::a('11', ['/order/default/index']));
+//        die;
+
         $searchModel = new AuthItemSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->get(), AuthItem::TYPE_ROLE);
 
@@ -125,6 +129,7 @@ class RoleController extends Controller
 
         $role = $this->auth->getRole($roleName);
 
+        AuthHelper::invalidatePermissions();
         if (is_array($userId)) {
             foreach ($userId as $k => $v) {
                 $this->auth->assign($role, $v);
@@ -182,7 +187,7 @@ class RoleController extends Controller
         $id = $request->post('id', '');
 
         $role = $auth->getRole($roleName);
-
+        AuthHelper::invalidatePermissions();
         if (is_array($id)) {
             foreach ($id as $k => $v) {
                 $permissions = $auth->getPermission($v);
@@ -197,7 +202,11 @@ class RoleController extends Controller
         return $this->ajaxReturn();
     }
 
-
+    /**
+     * @param $name
+     * @return AuthItem
+     * @throws NotFoundHttpException
+     */
     protected function findModel($name)
     {
         if ($name) {
@@ -238,22 +247,6 @@ class RoleController extends Controller
             return $role;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
-        }
-    }
-
-    /**
-     * @title 编辑角色
-     * @param $roleName
-     * @return array
-     */
-    public function actionEdit($roleName)
-    {
-        Yii::$app->response->format = Response::FORMAT_JSON;
-        $role = $this->auth->getRole($roleName);
-        if ($role) {
-            return $this->ajaxReturn(true, '', $role);
-        } else {
-            return $this->ajaxReturn(false, '角色不存在');
         }
     }
 }

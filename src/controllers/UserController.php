@@ -39,7 +39,6 @@ class UserController extends Controller
      */
     public function actionIndex()
     {
-
         if ($this->searchClass === null) {
             $searchModel = new UserSearch();
         } else {

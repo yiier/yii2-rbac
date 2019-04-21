@@ -5,6 +5,7 @@ namespace yiier\rbac\controllers;
 use Yii;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
+use yiier\rbac\helpers\AuthHelper;
 use yiier\rbac\helpers\Files;
 use yiier\rbac\Module;
 
@@ -60,6 +61,7 @@ class PermissionController extends Controller
                     $per = $auth->getPermission($permission);
                     $success = $auth->remove($per);
                 }
+                AuthHelper::invalidatePermissions();
                 $message = Yii::t('rbac', 'successfully updated');
             } catch (\Exception $e) {
                 $message = Yii::t('rbac', 'permission save error');
@@ -80,14 +82,16 @@ class PermissionController extends Controller
         $permissions = [];
         foreach ($methods as $key => $val) {
             $module = explode('\\', $key);
-            if (Yii::$app->getModule("{$module[1]}")) {
-                $name = str_replace('\\', '_', str_replace("{$module[0]}\\", "{$module[0]}@", $key));
-            } else {
-                $name = str_replace('\\', '_', str_replace('\\modules\\', '@', $key));
+            $name = "{$module[0]}@";
+            if (isset($module[1]) && Yii::$app->getModule($module[1])) {
+                $name = "{$module[0]}@{$module[1]}_module@";
+            } elseif ($module[1] == 'modules' && isset($module[2]) && Yii::$app->getModule($module[2])) {
+                $name = "{$module[0]}@{$module[2]}_module@";
             }
-            $arr = explode('_', $name);
+
+            $arr = explode('@', $name);
             foreach ($val as $k => $v) {
-                $permissionName = $name . '_' . $k;
+                $permissionName = $name . $k;
                 $permission = Yii::$app->authManager->getPermission($permissionName);
                 $permissions[$arr[0]][$arr[1]][$permissionName] = [
                     'des' => $permission ? $permission->description : $v,
