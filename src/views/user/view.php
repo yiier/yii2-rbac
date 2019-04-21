@@ -1,9 +1,13 @@
 <?php
 
+use yiier\rbac\Module;
+
 $this->title = Yii::t('rbac', 'View Permission');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('rbac', 'Users'), 'url' => ['/rbac/user']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+
+<?php $this->beginContent(Module::getInstance()->mainLayout) ?>
 
 <?php if ($permissions): ?>
     <div class="col-xs-12">
@@ -24,3 +28,4 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= Yii::t('rbac', 'No Data') ?>
 <?php endif ?>
 
+<?php $this->endContent() ?>

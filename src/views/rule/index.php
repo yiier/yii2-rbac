@@ -1,10 +1,13 @@
 <?php
 
 use yii\helpers\Url;
+use yiier\rbac\Module;
 
 $this->title = Yii::t('rbac', 'Rules');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+<?php $this->beginContent(Module::getInstance()->mainLayout) ?>
+
 
 <!-- /section:settings.box -->
 <div class="box-group" id="accordion">
@@ -45,3 +48,5 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="urls hidden">
     <a href="<?= Url::toRoute('/rbac/rule/create'); ?>" class="rule-url"></a>
 </div>
+
+<?php $this->endContent() ?>

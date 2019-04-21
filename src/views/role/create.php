@@ -1,13 +1,20 @@
 <?php
 
 /* @var $this yii\web\View */
+
+use yiier\rbac\Module;
+
 /* @var $model yiier\rbac\models\AuthItem */
 
 $this->title = Yii::t('rbac', 'Create Role');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('rbac', 'Roles'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+?>
 
-echo $this->render('_form', [
+<?php $this->beginContent(Module::getInstance()->mainLayout) ?>
+
+<?= $this->render('_form', [
     'model' => $model,
-]);
+]); ?>
 
+<?php $this->endContent() ?>

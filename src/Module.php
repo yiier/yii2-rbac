@@ -13,10 +13,9 @@ class Module extends \yii\base\Module
     public $rulesPath = [];
 
     /**
-     * @var string Main layout using for module. Default to layout of parent module.
-     * Its used when `layout` set to 'left-menu', 'right-menu' or 'top-menu'.
+     * @var string
      */
-    public $mainLayout = '@yiier/rbac/views/layouts/main.php';
+    public $mainLayout = '@yiier/rbac/views/layout.php';
 
     private $defaultMenus = [
         'rbac' => '权限系统',
