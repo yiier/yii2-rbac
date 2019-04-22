@@ -6,8 +6,7 @@ use Yii;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yiier\rbac\helpers\AuthHelper;
-use yiier\rbac\helpers\Files;
-use yiier\rbac\Module;
+use yiier\rbac\helpers\Route;
 
 /**
  * 角色管理主控制器
@@ -22,6 +21,8 @@ class PermissionController extends Controller
      */
     public function actionIndex()
     {
+//        $model = new \yiier\rbac\helpers\Route();
+//        pr($model->getRoutes());
         $basePermissions = $this->getBasePermissions();
         return $this->render('index', ['basePermissions' => $basePermissions]);
     }
@@ -72,28 +73,22 @@ class PermissionController extends Controller
     }
 
     /**
-     * @title 取得权限
+     * 取得权限
      * @return array
      * @throws \ReflectionException
+     * @throws \yii\base\InvalidConfigException
      */
     private function getBasePermissions()
     {
-        $methods = $this->getMethods();
+        $methods = Route::getMethods();
         $permissions = [];
         foreach ($methods as $key => $val) {
-            $module = explode('\\', $key);
-            $name = "{$module[0]}@";
-            if (isset($module[1]) && Yii::$app->getModule($module[1])) {
-                $name = "{$module[0]}@{$module[1]}_module@";
-            } elseif ($module[1] == 'modules' && isset($module[2]) && Yii::$app->getModule($module[2])) {
-                $name = "{$module[0]}@{$module[2]}_module@";
-            }
-
-            $arr = explode('@', $name);
+            $arr = explode('@', $key);
             foreach ($val as $k => $v) {
-                $permissionName = $name . $k;
+                $appId = $arr[0] . '@';
+                $permissionName = $appId . $k;
                 $permission = Yii::$app->authManager->getPermission($permissionName);
-                $permissions[$arr[0]][$arr[1]][$permissionName] = [
+                $permissions[$appId][$arr[1]][$permissionName] = [
                     'des' => $permission ? $permission->description : $v,
                     'rule_name' => $permission ? $permission->ruleName : "",
                     'action' => $k,
@@ -101,38 +96,7 @@ class PermissionController extends Controller
                 ];
             }
         }
+
         return $permissions;
-    }
-
-    /**
-     * @title 取得方法
-     * @return array
-     * @throws \ReflectionException
-     */
-    private function getMethods()
-    {
-        // 在配置中添加的要接受控制的命名空间
-        $namespaces = Module::getInstance()->allowNamespaces;
-        // 不接受控制的 module
-        $ignoreModules = Module::getInstance()->ignoreModules;
-
-        if (!$namespaces) {
-            $modules = Yii::$app->getModules();
-            foreach ($modules as $k => $v) {
-                if (!in_array($k, $ignoreModules)) {
-                    $mod = Yii::$app->getModule($k);
-                    $namespace = str_replace('/', '\\', $mod->controllerNamespace);
-                    array_push($namespaces, $namespace);
-                }
-            }
-
-            //当前所在命名空间的控制器
-            $currentNamespace = str_replace('/', '\\', \Yii::$app->controllerNamespace);
-            array_push($namespaces, $currentNamespace);
-        }
-
-        //获取类方法
-        $actions = (new Files())->getAllMethods($namespaces);
-        return $actions;
     }
 }

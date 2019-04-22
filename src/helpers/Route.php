@@ -3,36 +3,91 @@
 namespace yiier\rbac\helpers;
 
 use Yii;
+use yiier\rbac\Module;
 
-class Files
+class Route
 {
+    /**
+     * @title 取得方法
+     * @return array
+     * @throws \ReflectionException
+     * @throws \yii\base\InvalidConfigException
+     */
+    public static function getMethods()
+    {
+        $rbacModule = Module::getInstance();
+        $actions = [];
+        if ($rbacModule->isAdvanced && ($advancedConfigs = $rbacModule->advancedConfigs)) {
+            $yiiApp = Yii::$app;
+            foreach ($advancedConfigs as $configPaths) {
+                $config = [];
+                foreach ($configPaths as $configPath) {
+                    // Merge every new configuration with the old config array.
+                    $config = yii\helpers\ArrayHelper::merge($config, require(Yii::getAlias($configPath)));
+                }
+                unset($config['bootstrap']);
+                $app = new yii\web\Application($config);
+                $appId = Yii::$app->id . '@';
+                $actions[$appId] = Route::getAllMethods(static::getNamespaces(), $appId);
+                unset($app);
+            }
+            Yii::$app = $yiiApp;
+            unset($yiiApp);
+        } else {
+            $appId = Yii::$app->id . '@';
+            $actions = Route::getAllMethods(static::getNamespaces(), $appId);
+        }
 
-    static $separate = '_';
+        return $actions;
+    }
+
+
+    /**
+     * Get list of application routes
+     * @return array
+     */
+    private static function getNamespaces()
+    {
+        $modules = Yii::$app->getModules();
+        // 不接受控制的 module
+        $ignoreModules = Module::getInstance()->ignoreModules;
+        // 当前所在命名空间的控制器
+        $namespaces = [str_replace('/', '\\', Yii::$app->controllerNamespace)];
+        foreach ($modules as $k => $v) {
+            if (!in_array($k, $ignoreModules)) {
+                $mod = Yii::$app->getModule($k);
+                $namespace = str_replace('/', '\\', $mod->controllerNamespace);
+                array_push($namespaces, $namespace);
+            }
+        }
+        return $namespaces;
+    }
 
     /**
      * @title 取得所有方法
      * @param $namespaces
+     * @param string $appId
      * @return array
      * @throws \ReflectionException
      */
-    public function getAllMethods($namespaces)
+    private static function getAllMethods($namespaces, $appId)
     {
         $actions = [];
-        $namespaces = $this->getClasses($namespaces);
-        foreach ($namespaces as $k => $v) {
-            if (is_array($v)) {
-                $namespace = $k . '\\controllers';
+        $namespaces = static::getClasses($namespaces);
+        foreach ($namespaces as $namespace => $classNames) {
+            if (is_array($classNames)) {
+                $controllers = $namespace . '\\controllers';
                 $firstPrefix = '';
-                if (strpos($k, '\\') !== false) {
-                    $prefixArray = explode('\\', $k);
+                if (strpos($namespace, '\\') !== false) {
+                    $prefixArray = explode('\\', $namespace);
                     $firstPrefix = end($prefixArray) . '/';
                 }
-                foreach ($v as $key => $val) {
-                    $controllerNamespace = $namespace . '\\' . $val . 'Controller';
-                    $val = self::uper2lower($val);
-                    $prefix = $firstPrefix . $val;
+                foreach ($classNames as $key => $className) {
+                    $controllerNamespace = $controllers . '\\' . $className . 'Controller';
+                    $className = self::uper2lower($className);
+                    $prefix = $firstPrefix . $className;
                     $classMethods = self::getClassMethods($controllerNamespace, $prefix);
-                    $classMethods ? $actions[$k . '\\' . $val] = $classMethods : null;
+                    $classMethods ? $actions[$appId . $firstPrefix . $className] = $classMethods : null;
                 }
             }
         }
@@ -44,7 +99,7 @@ class Files
      * @param $namespaces
      * @return array
      */
-    private function getClasses($namespaces)
+    private static function getClasses($namespaces)
     {
         $classes = [];
         foreach ($namespaces as $k => $v) {
@@ -63,7 +118,7 @@ class Files
      * @return array
      * @throws \ReflectionException
      */
-    public static function getClassMethods($controller, $prefix)
+    private static function getClassMethods($controller, $prefix)
     {
         $actions = [];
         $controller = str_replace('/', '\\', $controller);
@@ -80,9 +135,6 @@ class Files
                 $name = strtolower(preg_replace('/(?<![A-Z])[A-Z]/', ' \0', substr($name, 6)));
                 $id = "/{$prefix}/" . ltrim(str_replace(' ', '-', $name), '-');
                 $actions[$id] = isset($matches[1]) ? trim($matches[1]) : '';
-//                $key = substr($method->name, 0, 6) == 'action' ? substr($method->name, 6) : $method->name;
-//                $key = self::uper2lower($key);
-//                $actions[$key] = isset($matches[1]) ? trim($matches[1]) : '';
             }
         }
         return $actions;
@@ -93,7 +145,7 @@ class Files
      * @param $dir
      * @return array
      */
-    public static function scan($dir)
+    private static function scan($dir)
     {
         $classes = array_diff(\scandir($dir), ['.', '..']);
         foreach ($classes as $k => &$v) {
@@ -106,7 +158,7 @@ class Files
         return $classes;
     }
 
-    public static function uper2lower($actionId)
+    private static function uper2lower($actionId)
     {
         return ltrim(strtolower(preg_replace('/([A-Z])/', '-${1}', $actionId)), '-');
     }
@@ -116,7 +168,7 @@ class Files
      * @param $filename
      * @return string
      */
-    public static function getClassFromFile($filename)
+    private static function getClassFromFile($filename)
     {
         $lines = file($filename);
         $namespaces = preg_grep('/^namespace /', $lines);

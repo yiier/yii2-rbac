@@ -7,26 +7,41 @@ use yiier\rbac\assets\RbacAsset;
 
 class Module extends \yii\base\Module
 {
-    public $allowNamespaces = [];
     public $ignoreModules = ['gii', 'debug'];
     public $menus = [];
     public $rulesPath = [];
+
+    public $isAdvanced = false;
+    public $advancedConfigs = [
+        [
+            '@common/config/main.php',
+            '@common/config/main-local.php',
+            '@frontend/config/main.php',
+            '@frontend/config/main-local.php',
+        ],
+        [
+            '@common/config/main.php',
+            '@common/config/main-local.php',
+            '@backend/config/main.php',
+            '@backend/config/main-local.php',
+        ],
+    ];
 
     /**
      * @var string
      */
     public $mainLayout = '@yiier/rbac/views/layout.php';
 
-    /**
-     * @var array
-     */
-    private $defaultMenus = [];
-
     // users
     public $userClassName;
     public $idField = 'id';
     public $usernameField = 'username';
     public $searchClass;
+
+    /**
+     * @var array
+     */
+    private $defaultMenus = [];
 
     public function init()
     {

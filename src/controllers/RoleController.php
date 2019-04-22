@@ -27,7 +27,7 @@ class RoleController extends Controller
      */
     public function actionIndex()
     {
-        var_dump(AuthHelper::a('11', ['/order/default/index']));
+//        var_dump(AuthHelper::a('11', ['/order/default/index']));
 //        die;
 
         $searchModel = new AuthItemSearch();

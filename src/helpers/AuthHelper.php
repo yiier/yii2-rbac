@@ -41,7 +41,7 @@ class AuthHelper
             return true;
         }
         AuthHelper::ensurePermissionsUpToDate();
-        pr(Yii::$app->session->get(self::SESSION_PREFIX_PERMISSIONS, []));
+//        pr(Yii::$app->session->get(self::SESSION_PREFIX_PERMISSIONS, []));
         return self::isRouteAllowed($baseRoute, Yii::$app->session->get(self::SESSION_PREFIX_PERMISSIONS, []));
     }
 

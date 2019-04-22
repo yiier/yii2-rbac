@@ -6,7 +6,7 @@ use Yii;
 use yii\helpers\FileHelper;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
-use yiier\rbac\helpers\Files;
+use yiier\rbac\helpers\Route;
 use yiier\rbac\models\AuthRule;
 use yiier\rbac\Module;
 
@@ -78,7 +78,7 @@ class RuleController extends Controller
             foreach ($rulesPath as $key => $rulePath) {
                 $files = FileHelper::findFiles(Yii::getAlias($rulePath), ['*.php']);
                 foreach ((array)$files as $k => $file) {
-                    $className = Files::getClassFromFile($file);
+                    $className = Route::getClassFromFile($file);
                     $id = "{$key}-{$k}";
                     $items[$id]['class_name'] = $className;
                     $items[$id]['name'] = isset($dbRules[$className]) ? $dbRules[$className] : '';
