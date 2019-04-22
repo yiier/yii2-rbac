@@ -28,6 +28,16 @@ class PermissionController extends Controller
     }
 
     /**
+     * @title 清除缓存
+     * @return string
+     */
+    public function actionClearCache()
+    {
+        Route::invalidate();
+        return $this->redirect('index');
+    }
+
+    /**
      * @title 创建权限
      * @return array|int
      * @throws \Exception
@@ -80,7 +90,7 @@ class PermissionController extends Controller
      */
     private function getBasePermissions()
     {
-        $methods = Route::getMethods();
+        $methods = Route::getAllRoutes();
         $permissions = [];
         foreach ($methods as $key => $val) {
             $arr = explode('@', $key);

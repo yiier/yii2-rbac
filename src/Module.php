@@ -10,6 +10,7 @@ class Module extends \yii\base\Module
     public $ignoreModules = ['gii', 'debug'];
     public $menus = [];
     public $rulesPath = [];
+    public $cacheDuration = 3600 * 30; // default 30 day
 
     public $isAdvanced = false;
     public $advancedConfigs = [

@@ -3,17 +3,42 @@
 namespace yiier\rbac\helpers;
 
 use Yii;
+use yii\caching\TagDependency;
 use yiier\rbac\Module;
 
 class Route
 {
+    const CACHE_TAG = 'yiier.rbac.route';
+
+    /**
+     * Get list of application routes
+     * @return array
+     * @throws \ReflectionException
+     * @throws \yii\base\InvalidConfigException
+     */
+    public static function getAllRoutes()
+    {
+        $rbacModule = Module::getInstance();
+        $key = [__METHOD__, Yii::$app->id, $rbacModule->getUniqueId()];
+        $cache = Yii::$app->cache;
+        if ($cache === null || ($result = $cache->get($key)) === false) {
+            $result = self::getMethods();
+            if ($cache !== null) {
+                $cache->set($key, $result, $rbacModule->cacheDuration, new TagDependency([
+                    'tags' => self::CACHE_TAG,
+                ]));
+            }
+        }
+        return $result;
+    }
+
     /**
      * @title 取得方法
      * @return array
      * @throws \ReflectionException
      * @throws \yii\base\InvalidConfigException
      */
-    public static function getMethods()
+    private static function getMethods()
     {
         $rbacModule = Module::getInstance();
         $actions = [];
@@ -163,12 +188,13 @@ class Route
         return ltrim(strtolower(preg_replace('/([A-Z])/', '-${1}', $actionId)), '-');
     }
 
+
     /**
      * get php file className
      * @param $filename
      * @return string
      */
-    private static function getClassFromFile($filename)
+    public static function getClassFromFile($filename)
     {
         $lines = file($filename);
         $namespaces = preg_grep('/^namespace /', $lines);
@@ -182,5 +208,16 @@ class Route
         $nameAndExtension = explode('.', $filename);
         $className = array_shift($nameAndExtension);
         return $fullNamespace . '\\' . $className;
+    }
+
+
+    /**
+     * invalidate cache
+     */
+    public static function invalidate()
+    {
+        if (Yii::$app->cache !== null) {
+            TagDependency::invalidate(Yii::$app->cache, self::CACHE_TAG);
+        }
     }
 }

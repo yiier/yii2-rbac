@@ -17,6 +17,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 <i class="fa fa-check"></i>
             </span>
         <?= Yii::t('rbac', 'Please select need to accept access control functions.') ?>
+        <span class="pull-right">
+            <?= \yii\helpers\Html::a(Yii::t('rbac', 'Clear Cache'), ['clear-cache']) ?>
+        </span>
     </p>
 </div>
 <!-- PAGE CONTENT BEGINS -->

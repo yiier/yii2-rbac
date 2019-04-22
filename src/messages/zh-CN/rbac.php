@@ -68,4 +68,5 @@ return [
     'Role Name' => '角色名',
     'Created At' => '创建时间',
     'Updated At' => '更新时间',
+    'Clear Cache' => '清除缓存',
 ];
