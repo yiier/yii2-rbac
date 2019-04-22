@@ -75,8 +75,8 @@ class UserController extends Controller
 
         $new = [];
         foreach ($permissions as $key => $val) {
-            $arr = explode('_', $val->name);
-            $new[$arr[0] . '_' . $arr[1]][] = [
+            $newKey = substr($val->name, 0, strripos($val->name, '/'));
+            $new[$newKey][] = [
                 'name' => $val->name,
                 'description' => $val->description,
             ];
