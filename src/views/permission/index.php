@@ -2,6 +2,7 @@
 
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
+use yiier\rbac\helpers\Html;
 use yiier\rbac\models\AuthRule;
 use yiier\rbac\Module;
 
@@ -18,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
             </span>
         <?= Yii::t('rbac', 'Please select need to accept access control functions.') ?>
         <span class="pull-right">
-            <?= \yii\helpers\Html::a(Yii::t('rbac', 'Clear Cache'), ['clear-cache']) ?>
+            <?= Html::a(Yii::t('rbac', 'Clear Cache'), ['clear-cache']) ?>
         </span>
     </p>
 </div>

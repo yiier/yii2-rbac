@@ -9,80 +9,83 @@ namespace yiier\rbac\helpers;
 
 
 use Yii;
-use yii\helpers\Html;
-use yii\helpers\Inflector;
+use yii\caching\TagDependency;
 use yii\helpers\Url;
-use yii\web\IdentityInterface;
+use yii\web\User;
+use yiier\rbac\Module;
 
 class AuthHelper
 {
-    const SESSION_PREFIX_LAST_UPDATE = '__auth_last_update';
-    const SESSION_PREFIX_ROLES = '__userRoles';
-    const SESSION_PREFIX_PERMISSIONS = '__userPermissions';
-    const SESSION_PREFIX_ROUTES = '__userRoutes';
+    private static $_userRoutes = [];
+    private static $_allPermission = [];
 
-    /**
-     * Hide link if user hasn't access to it
-     *
-     * @inheritdoc
-     */
-    public static function a($text, $url = null, $options = [])
-    {
-        if (in_array($url, [null, '', '#'])) {
-            return Html::a($text, $url, $options);
-        }
-        return self::canRoute($url) ? Html::a($text, $url, $options) : '';
-    }
-
-    public static function canRoute($route)
+    public static function canRoute($route, User $user = null)
     {
         $baseRoute = self::unifyRoute($route);
         if (substr($baseRoute, 0, 4) === "http") {
             return true;
         }
-        AuthHelper::ensurePermissionsUpToDate();
-//        pr(Yii::$app->session->get(self::SESSION_PREFIX_PERMISSIONS, []));
-        return self::isRouteAllowed($baseRoute, Yii::$app->session->get(self::SESSION_PREFIX_PERMISSIONS, []));
-    }
-
-
-    /**
-     * Gather all user permissions and roles and store them in the session
-     *
-     * @param IdentityInterface $identity
-     */
-    private static function updatePermissions($identity)
-    {
-        $session = Yii::$app->session;
-        // Clear data first in case we want to refresh permissions
-        $session->remove(self::SESSION_PREFIX_PERMISSIONS);
-
-        // Set permissions last mod time
-        $session->set(
-            self::SESSION_PREFIX_LAST_UPDATE,
-            filemtime(self::getPermissionsLastModFile())
-        );
-
-        $auth = Yii::$app->authManager;
-
-        // Save roles, permissions and routes in session
-        $session->set(
-            self::SESSION_PREFIX_PERMISSIONS,
-            array_keys($auth->getPermissionsByUser($identity->getId()))
-        );
+        $userId = $user ? $user->getId() : Yii::$app->getUser()->getId();
+        $routesByUser = static::getRoutesByUser($userId);
+        return self::isRouteAllowed($baseRoute, $routesByUser);
     }
 
     /**
-     * @return string
+     * @return array
      */
-    public static function getPermissionName()
+    private static function getAllPermissions()
     {
-        $controller = Yii::$app->controller;
-        $controllerId = $controller->id;
-        $actionId = $controller->action->id;
-        $moduleId = $controller->module->uniqueId ? '@' . $controller->module->uniqueId : '';
-        $app = explode('\\', get_class($controller));
-        return "{$app[0]}{$moduleId}_{$controllerId}_{$actionId}";
+        if (!self::$_allPermission) {
+            $cache = Yii::$app->cache;
+            if ($cache && ($routes = $cache->get([__METHOD__])) !== false) {
+                self::$_allPermission = $routes;
+            } else {
+                $routes = [];
+                $manager = Yii::$app->authManager;
+                foreach ($manager->getPermissions() as $item) {
+                    $routes[] = $item->name;
+                }
+                self::$_allPermission = $routes;
+                if ($cache) {
+                    $cache->set(
+                        [__METHOD__],
+                        $routes,
+                        Module::getInstance()->cacheDuration,
+                        new TagDependency(['tags' => Module::CACHE_TAG])
+                    );
+                }
+            }
+        }
+        return self::$_allPermission;
+    }
+
+    /**
+     * @param $userId
+     * @return array
+     */
+    private static function getRoutesByUser($userId)
+    {
+        if (!isset(self::$_userRoutes[$userId])) {
+            $cache = Yii::$app->cache;
+            if ($cache && ($routes = $cache->get([__METHOD__, $userId])) !== false) {
+                self::$_userRoutes[$userId] = $routes;
+            } else {
+                $routes = [];
+                $manager = Yii::$app->authManager;
+                foreach ($manager->getPermissionsByUser($userId) as $item) {
+                    $routes[] = $item->name;
+                }
+                self::$_userRoutes[$userId] = $routes;
+                if ($cache) {
+                    $cache->set(
+                        [__METHOD__, $userId], $routes,
+                        Module::getInstance()->cacheDuration,
+                        new TagDependency(['tags' => Module::CACHE_TAG])
+                    );
+                }
+            }
+        }
+        return self::$_userRoutes[$userId];
     }
 
     /**
@@ -90,60 +93,19 @@ class AuthHelper
      * @param $allowedRoutes
      * @return bool
      */
-    public static function isRouteAllowed($route, $allowedRoutes)
+    private static function isRouteAllowed($route, $allowedRoutes)
     {
         $route = rtrim(Yii::$app->getRequest()->getBaseUrl(), '/') . $route;
-        if (in_array($route, $allowedRoutes)) {
+        $permission = Yii::$app->id . '@' . $route;
+        // 必选先在『权限列表』页面勾选权限，才会去判断权限权限
+        if (!in_array($permission, self::getAllPermissions())) {
             return true;
         }
-        foreach ($allowedRoutes as $allowedRoute) {
-            // If some controller fully allowed (wildcard)
-            if (substr($allowedRoute, -1) == '*') {
-                $routeArray = explode('/', $route);
-                array_splice($routeArray, -1);
-                $allowedRouteArray = explode('/', $allowedRoute);
-                array_splice($allowedRouteArray, -1);
-                if (array_diff($routeArray, $allowedRouteArray) === array()) {
-                    return true;
-                }
-            }
+
+        if (in_array($permission, $allowedRoutes)) {
+            return true;
         }
         return false;
-    }
-
-    /**
-     * Checks if permissions has been changed somehow, and refresh data in session if necessary
-     */
-    public static function ensurePermissionsUpToDate()
-    {
-        if (!Yii::$app->user->isGuest) {
-            if (Yii::$app->session->get(self::SESSION_PREFIX_LAST_UPDATE) != filemtime(self::getPermissionsLastModFile())) {
-                static::updatePermissions(Yii::$app->user->identity);
-            }
-        }
-    }
-
-    /**
-     * Get path to file that store time of the last auth changes
-     *
-     * @return string
-     */
-    private static function getPermissionsLastModFile()
-    {
-        $file = Yii::$app->runtimePath . '/__permissions_last_mod.txt';
-        if (!is_file($file)) {
-            file_put_contents($file, '');
-            chmod($file, 0777);
-        }
-        return $file;
-    }
-
-    /**
-     * Change modification time of permissions last mod file
-     */
-    public static function invalidatePermissions()
-    {
-        touch(static::getPermissionsLastModFile());
     }
 
     /**
@@ -153,7 +115,7 @@ class AuthHelper
      *
      * @return string
      */
-    public static function unifyRoute($route)
+    private static function unifyRoute($route)
     {
         // If its like Html::a('Create', ['create'])
         if (is_array($route) AND strpos($route[0], '/') === false) {
@@ -177,55 +139,24 @@ class AuthHelper
         // baseUrl and leave only relative path 'bla-bla'
         if ($baseUrl) {
             if (strpos($routeAsString, $baseUrl) === 0) {
-                $routeAsString = substr_replace($routeAsString, '', 0,
-                    strlen($baseUrl));
+                $routeAsString = substr_replace($routeAsString, '', 0, strlen($baseUrl));
             }
         }
         $languagePrefix = '/' . Yii::$app->language . '/';
         // Remove language prefix
         if (strpos($routeAsString, $languagePrefix) === 0) {
-            $routeAsString = substr_replace($routeAsString, '', 0,
-                strlen($languagePrefix));
+            $routeAsString = substr_replace($routeAsString, '', 0, strlen($languagePrefix));
         }
         return '/' . ltrim($routeAsString, '/');
     }
 
-
     /**
-     * @return array
+     * Use to invalidate cache.
      */
-    public static function getAllModules()
+    public static function invalidate()
     {
-        $result = [];
-
-        $currentEnvModules = \Yii::$app->getModules();
-
-        foreach ($currentEnvModules as $moduleId => $uselessStuff) {
-            $result[$moduleId] = \Yii::$app->getModule($moduleId);
-        }
-
-        return $result;
-    }
-
-    /**
-     * @param \yii\base\Controller $controller
-     * @param array $result all controller action.
-     * @throws \ReflectionException
-     */
-    public static function getActionRoutes($controller, &$result)
-    {
-        $prefix = '/' . $controller->uniqueId . '/';
-        foreach ($controller->actions() as $id => $value) {
-            $result[] = $prefix . $id;
-        }
-        $class = new \ReflectionClass($controller);
-        foreach ($class->getMethods() as $method) {
-            $name = $method->getName();
-            if ($method->isPublic() && !$method->isStatic() && strpos($name,
-                    'action') === 0 && $name !== 'actions'
-            ) {
-                $result[] = $prefix . Inflector::camel2id(substr($name, 6));
-            }
+        if (Yii::$app->cache !== null) {
+            TagDependency::invalidate(Yii::$app->cache, Module::CACHE_TAG);
         }
     }
 }

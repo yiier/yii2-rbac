@@ -27,7 +27,9 @@ class RoleController extends Controller
      */
     public function actionIndex()
     {
-//        var_dump(AuthHelper::a('11', ['/order/default/index']));
+//        echo \yiier\rbac\helpers\Html::a('11', ['/site/index']);
+//        echo \yiier\rbac\helpers\Html::a('11', ['index']);
+//        echo \yiier\rbac\helpers\Html::a('11', ['/order/default/update']);
 //        die;
 
         $searchModel = new AuthItemSearch();
@@ -129,7 +131,7 @@ class RoleController extends Controller
 
         $role = $this->auth->getRole($roleName);
 
-        AuthHelper::invalidatePermissions();
+        AuthHelper::invalidate();
         if (is_array($userId)) {
             foreach ($userId as $k => $v) {
                 $this->auth->assign($role, $v);
@@ -158,11 +160,10 @@ class RoleController extends Controller
         $auth = Yii::$app->authManager;
         $permissions = $auth->getPermissions();
         $hasPermissions = array_keys($auth->getPermissionsByRole($name));
-
         $new = [];
         foreach ($permissions as $key => $val) {
-            $arr = explode('_', $val->name);
-            $new[$arr[0] . '_' . $arr[1]][] = [
+            $newKey = substr($val->name, 0, strripos($val->name, '/'));
+            $new[$newKey][] = [
                 'name' => $val->name,
                 'description' => $val->description,
                 'is_sel' => in_array($val->name, $hasPermissions), // 是否拥有
@@ -187,7 +188,7 @@ class RoleController extends Controller
         $id = $request->post('id', '');
 
         $role = $auth->getRole($roleName);
-        AuthHelper::invalidatePermissions();
+        AuthHelper::invalidate();
         if (is_array($id)) {
             foreach ($id as $k => $v) {
                 $permissions = $auth->getPermission($v);

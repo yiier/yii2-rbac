@@ -6,6 +6,7 @@ use Yii;
 use yii\di\Instance;
 use yii\web\ForbiddenHttpException;
 use yii\web\User;
+use yiier\rbac\helpers\AuthHelper;
 
 class AccessControl extends \yii\base\ActionFilter
 {
@@ -44,19 +45,10 @@ class AccessControl extends \yii\base\ActionFilter
     public function beforeAction($action)
     {
         $user = $this->getUser();
-
-        $controllerId = $action->controller->id;
-        $moduleId = $action->controller->module->uniqueId ? '@' . $action->controller->module->uniqueId : '';
-        $app = explode('\\', get_class(Yii::$app->controller));
-        $permissionName = "{$app[0]}{$moduleId}_{$controllerId}_{$action->id}";
-
-        if (Yii::$app->authManager->getPermission($permissionName)) {
-            if (Yii::$app->user->can($permissionName)) {
-                return true;
-            }
-            $this->denyAccess($user);
+        if (AuthHelper::canRoute(Yii::$app->getRequest()->url, $user)) {
+            return true;
         }
-        return true;
+        $this->denyAccess($user);
     }
 
     /**

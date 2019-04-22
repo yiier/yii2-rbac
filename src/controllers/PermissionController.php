@@ -72,11 +72,11 @@ class PermissionController extends Controller
                     $per = $auth->getPermission($permission);
                     $success = $auth->remove($per);
                 }
-                AuthHelper::invalidatePermissions();
                 $message = Yii::t('rbac', 'successfully updated');
             } catch (\Exception $e) {
                 $message = Yii::t('rbac', 'permission save error');
             }
+            AuthHelper::invalidate();
             return $this->ajaxReturn($success, $message);
         }
         throw new NotFoundHttpException();

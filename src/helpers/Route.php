@@ -78,15 +78,27 @@ class Route
         $ignoreModules = Module::getInstance()->ignoreModules;
         // 当前所在命名空间的控制器
         $namespaces = [str_replace('/', '\\', Yii::$app->controllerNamespace)];
-        foreach ($modules as $k => $v) {
-            if (!in_array($k, $ignoreModules)) {
-                $mod = Yii::$app->getModule($k);
-                $namespace = str_replace('/', '\\', $mod->controllerNamespace);
-                array_push($namespaces, $namespace);
+        foreach ($modules as $id => $v) {
+            if (!in_array($id, $ignoreModules)) {
+                $namespaces = array_merge($namespaces, self::getNamespacesByModuleId($id));
             }
         }
         return $namespaces;
     }
+
+    /**
+     * @param $id
+     * @return array
+     */
+    private static function getNamespacesByModuleId($id)
+    {
+        $namespaces = [];
+        $mod = Yii::$app->getModule($id);
+        $namespace = str_replace('/', '\\', $mod->controllerNamespace);
+        array_push($namespaces, $namespace);
+        return $namespaces;
+    }
+
 
     /**
      * @title 取得所有方法

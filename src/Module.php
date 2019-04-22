@@ -7,6 +7,8 @@ use yiier\rbac\assets\RbacAsset;
 
 class Module extends \yii\base\Module
 {
+    const CACHE_TAG = 'yiier.rbac';
+
     public $ignoreModules = ['gii', 'debug'];
     public $menus = [];
     public $rulesPath = [];
