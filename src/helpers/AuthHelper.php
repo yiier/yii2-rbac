@@ -1,6 +1,6 @@
 <?php
 /**
- * author     : forecho <zhenghaicai@hk01.com>
+ * author     : forecho <caizhenghai@gmail.com>
  * createTime : 2019/4/21 11:15 AM
  * description:
  */
@@ -12,26 +12,36 @@ use Yii;
 use yii\caching\TagDependency;
 use yii\helpers\Url;
 use yii\web\User;
-use yiier\rbac\Module;
 
 class AuthHelper
 {
     private static $_userRoutes = [];
     private static $_allPermission = [];
 
+    /**
+     * @param $route
+     * @param User|null $user
+     * @return bool
+     * @throws \yii\base\InvalidConfigException
+     */
     public static function canRoute($route, User $user = null)
     {
+        $userId = $user ? $user->getId() : Yii::$app->getUser()->getId();
+        if ($userId == Config::instance()->superManId) {
+            return true;
+        }
+
         $baseRoute = self::unifyRoute($route);
         if (substr($baseRoute, 0, 4) === "http") {
             return true;
         }
-        $userId = $user ? $user->getId() : Yii::$app->getUser()->getId();
         $routesByUser = static::getRoutesByUser($userId);
         return self::isRouteAllowed($baseRoute, $routesByUser);
     }
 
     /**
      * @return array
+     * @throws \yii\base\InvalidConfigException
      */
     private static function getAllPermissions()
     {
@@ -50,8 +60,8 @@ class AuthHelper
                     $cache->set(
                         [__METHOD__],
                         $routes,
-                        Module::getInstance()->cacheDuration,
-                        new TagDependency(['tags' => Module::CACHE_TAG])
+                        Config::instance()->cacheDuration,
+                        new TagDependency(['tags' => Config::CACHE_TAG])
                     );
                 }
             }
@@ -62,6 +72,7 @@ class AuthHelper
     /**
      * @param $userId
      * @return array
+     * @throws \yii\base\InvalidConfigException
      */
     private static function getRoutesByUser($userId)
     {
@@ -79,8 +90,8 @@ class AuthHelper
                 if ($cache) {
                     $cache->set(
                         [__METHOD__, $userId], $routes,
-                        Module::getInstance()->cacheDuration,
-                        new TagDependency(['tags' => Module::CACHE_TAG])
+                        Config::instance()->cacheDuration,
+                        new TagDependency(['tags' => Config::CACHE_TAG])
                     );
                 }
             }
@@ -92,6 +103,7 @@ class AuthHelper
      * @param $route
      * @param $allowedRoutes
      * @return bool
+     * @throws \yii\base\InvalidConfigException
      */
     private static function isRouteAllowed($route, $allowedRoutes)
     {
@@ -156,7 +168,7 @@ class AuthHelper
     public static function invalidate()
     {
         if (Yii::$app->cache !== null) {
-            TagDependency::invalidate(Yii::$app->cache, Module::CACHE_TAG);
+            TagDependency::invalidate(Yii::$app->cache, Config::CACHE_TAG);
         }
     }
 }

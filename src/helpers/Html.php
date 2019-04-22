@@ -1,6 +1,6 @@
 <?php
 /**
- * author     : forecho <zhenghaicai@hk01.com>
+ * author     : forecho <caizhenghai@gmail.com>
  * createTime : 2019/4/22 4:11 PM
  * description:
  */
@@ -11,9 +11,11 @@ namespace yiier\rbac\helpers;
 class Html extends \yii\helpers\Html
 {
     /**
-     * Hide link if user hasn't access to it
-     *
-     * @inheritdoc
+     * @param string $text
+     * @param null $url
+     * @param array $options
+     * @return string
+     * @throws \yii\base\InvalidConfigException
      */
     public static function a($text, $url = null, $options = [])
     {

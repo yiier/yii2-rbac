@@ -12,7 +12,6 @@ class Module extends \yii\base\Module
     public $ignoreModules = ['gii', 'debug'];
     public $menus = [];
     public $rulesPath = [];
-    public $cacheDuration = 3600 * 30; // default 30 day
 
     public $isAdvanced = false;
     public $advancedConfigs = [
@@ -41,11 +40,6 @@ class Module extends \yii\base\Module
     public $usernameField = 'username';
     public $searchClass;
 
-    /**
-     * @var array
-     */
-    private $defaultMenus = [];
-
     public function init()
     {
         parent::init();
@@ -56,14 +50,15 @@ class Module extends \yii\base\Module
             ];
         }
         RbacAsset::register(Yii::$app->view);
-        $this->defaultMenus = [
+
+        $defaultMenus = [
             'rbac' => Yii::t('rbac', 'RBAC'),
             'permissions' => Yii::t('rbac', 'Permissions'),
             'roles' => Yii::t('rbac', 'Roles'),
             'users' => Yii::t('rbac', 'Users'),
             'rules' => Yii::t('rbac', 'Rules'),
         ];
-        $this->menus = array_merge($this->menus, $this->defaultMenus);
+        $this->menus = array_merge($this->menus, $defaultMenus);
     }
 
     public function getItems()
