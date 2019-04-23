@@ -24,7 +24,7 @@ class Route
         if ($cache === null || ($result = $cache->get($key)) === false) {
             $result = self::getMethods();
             if ($cache !== null) {
-                $cache->set($key, $result, $rbacModule->cacheDuration, new TagDependency([
+                $cache->set($key, $result, Config::instance()->cacheDuration, new TagDependency([
                     'tags' => self::CACHE_TAG,
                 ]));
             }

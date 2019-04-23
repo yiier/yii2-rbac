@@ -18,11 +18,10 @@ class PermissionController extends Controller
      * @title 权限列表
      * @return string
      * @throws \ReflectionException
+     * @throws \yii\base\InvalidConfigException
      */
     public function actionIndex()
     {
-//        $model = new \yiier\rbac\helpers\Route();
-//        pr($model->getRoutes());
         $basePermissions = $this->getBasePermissions();
         return $this->render('index', ['basePermissions' => $basePermissions]);
     }

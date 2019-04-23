@@ -27,11 +27,6 @@ class RoleController extends Controller
      */
     public function actionIndex()
     {
-//        echo \yiier\rbac\helpers\Html::a('11', ['/site/index']);
-//        echo \yiier\rbac\helpers\Html::a('11', ['index']);
-//        echo \yiier\rbac\helpers\Html::a('11', ['/order/default/update']);
-//        die;
-
         $searchModel = new AuthItemSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->get(), AuthItem::TYPE_ROLE);
 
