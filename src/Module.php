@@ -65,7 +65,7 @@ class Module extends \yii\base\Module
     {
         return [
             'label' => $this->menus['rbac'],
-            'url' => ['#'],
+            'url' => '#',
             'icon' => 'fa fa-cog',
             'options' => [
                 'class' => 'treeview',
