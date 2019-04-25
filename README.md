@@ -30,7 +30,7 @@ to the require section of your `composer.json` file.
 Usage
 -----
 
-### 安装
+### 配置
 
 - 修改配置文件，比如 修改 `config/main.php`， 添加：
 
