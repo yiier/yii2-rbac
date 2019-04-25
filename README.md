@@ -2,6 +2,11 @@ RBAC Manager for Yii 2
 ==============
 RBAC Auth manager for Yii2
 
+[![Latest Stable Version](https://poser.pugx.org/yiier/yii2-rbac/v/stable)](https://packagist.org/packages/yiier/yii2-rbac) 
+[![Total Downloads](https://poser.pugx.org/yiier/yii2-rbac/downloads)](https://packagist.org/packages/yiier/yii2-rbac) 
+[![Latest Unstable Version](https://poser.pugx.org/yiier/yii2-rbac/v/unstable)](https://packagist.org/packages/yiier/yii2-rbac) 
+[![License](https://poser.pugx.org/yiier/yii2-rbac/license)](https://packagist.org/packages/yiier/yii2-rbac)
+
 Installation
 ------------
 
