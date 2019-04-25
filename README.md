@@ -171,6 +171,12 @@ echo  yiier\rbac\widgets\SpuerMenu::widget(
                 'url' => Yii::$app->homeUrl,
                 'icon' => 'dashboard',
             ],
+            [
+                'label' => Yii::t('app', 'Create Product'), 
+                'icon' => 'plus', 
+                'url' => ['/product/create'], 
+                'strict' => true
+            ],
             \Yii::$app->getModule('rbac')->getInstance()->getItems() // add menu
         ]
     ]
@@ -191,6 +197,10 @@ echo  yiier\rbac\widgets\SpuerMenu::widget(
 - 在『角色管理』中，添加完角色之后再可以分别给角色分配用户和权限。操作的时候点击对应的权限/用户会立即自动保存。
 
 ![](https://blog-1251237404.cos.ap-guangzhou.myqcloud.com/20190424230424.png)
+
+![](https://blog-1251237404.cos.ap-guangzhou.myqcloud.com/20190425181221.png)
+
+![](https://blog-1251237404.cos.ap-guangzhou.myqcloud.com/20190425181059.png)
 
 - 『用户列表』：只能看某个用户拥有的所有角色和所有权限
 

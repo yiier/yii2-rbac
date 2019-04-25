@@ -56,10 +56,10 @@ class AuthItem extends \yii\db\ActiveRecord
             $auth = Yii::$app->getAuthManager();
             $labels = $this->attributeLabels();
             if ($this->isNewRecord && $auth->getPermission($this->name)) {
-                $this->addError('name', $labels[$attribute] . Yii::t('app', 'already exists.'));
+                $this->addError('name', $labels[$attribute] . Yii::t('rbac', 'already exists.'));
             }
             if ($this->isNewRecord && $auth->getRole($this->name)) {
-                $this->addError('name', $labels[$attribute] . Yii::t('app', 'already exists.'));
+                $this->addError('name', $labels[$attribute] . Yii::t('rbac', 'already exists.'));
             }
         }
     }

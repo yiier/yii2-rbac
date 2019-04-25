@@ -28,7 +28,7 @@ class ActionColumn extends \yii\grid\ActionColumn
         if (!isset($this->buttons['setting'])) {
             $this->buttons['setting'] = function ($url, $model) {
                 return Html::a('<span class="fa fa-cog btn btn-xs btn-primary"></span>', $url, [
-                    'title' => Yii::t('app', 'Setting'),
+                    'title' => Yii::t('rbac', 'Setting'),
                     'data-pjax' => '0',
                     'data-toggle' => 'tooltip'
                 ]);

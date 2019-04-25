@@ -50,9 +50,18 @@ Pjax::begin([
         'class' => 'grid-view table-responsive rbac-grid'
     ],
     'columns' => [
-        ['class' => 'yii\grid\SerialColumn'],
-        $idField,
-        $usernameField,
+        [
+            'header' => Yii::t('rbac', $usernameField),
+            'value' => function ($model) use ($usernameField) {
+                return $model->{$usernameField};
+            }
+        ],
+        [
+            'header' => Yii::t('rbac', $idField),
+            'value' => function ($model) use ($idField) {
+                return $model->{$idField};
+            }
+        ],
         [
             'header' => Yii::t('rbac', 'Roles'),
             'format' => 'raw',

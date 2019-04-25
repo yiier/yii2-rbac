@@ -14,6 +14,7 @@ return [
     'Check All' => '全选',
     'Click on the selection' => '点击全选',
     'RBAC' => '权限系统',
+    'Setting' => '设置',
     'Click{name}, background color change after says it has chosen' => '点击{name}，背景色变化之后表示已经选中',
     'Permission' => '权限',
     'Permissions List' => '权限列表',
@@ -23,6 +24,8 @@ return [
     'Actions' => '操作',
     'successfully updated' => '操作成功',
     'Delete success' => '删除成功',
+    'Create role success' => '创建角色成功',
+    'already exists.' => '已存在',
 
     'Avaliable' => '可用',
     'Assigned' => '分配',
@@ -69,4 +72,6 @@ return [
     'Created At' => '创建时间',
     'Updated At' => '更新时间',
     'Clear Cache' => '清除缓存',
+    'id' => 'ID',
+    'username' => '用户名',
 ];

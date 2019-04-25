@@ -47,7 +47,7 @@ class RoleController extends Controller
         $model->type = AuthItem::TYPE_ROLE;
         if ($model->load(Yii::$app->request->post())) {
             if ($model->createRole()) {
-                Yii::$app->session->setFlash('success', Yii::t('app', 'Create role success'));
+                Yii::$app->session->setFlash('success', Yii::t('rbac', 'Create role success'));
                 return $this->redirect('index');
             }
         }
@@ -226,7 +226,7 @@ class RoleController extends Controller
     {
         $role = $this->findRole($name);
         if ($this->auth->remove($role)) {
-            Yii::$app->session->setFlash('success', Yii::t('app', 'Delete success'));
+            Yii::$app->session->setFlash('success', Yii::t('rbac', 'Delete success'));
         }
         return $this->redirect(['index']);
     }
