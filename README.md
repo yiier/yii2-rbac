@@ -215,6 +215,6 @@ echo  yiier\rbac\widgets\SpuerMenu::widget(
 
 待补充
 
-> [Get√Yii](http://www.getyii.com)
+> [Get√Yii](https://getyii.com/)
 <i>Web development has never been so fun!</i>
-[www.getyii.com](http://www.getyii.com)
+[www.getyii.com](https://getyii.com/)
