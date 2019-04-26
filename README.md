@@ -96,7 +96,7 @@ php yii migrate --migrationPath=@yii/rbac/migrations/
 ],
 'as access' => [
     'class' => 'yiier\rbac\components\AccessControl',
-    // 'allowActions' => ['site/login', 'site/error', 'site/captcha', order/*] //白名单
+    // 'allowActions' => ['site/login', 'site/error', 'site/captcha', 'order/*'] //白名单
 ],
 ```
 
@@ -180,7 +180,7 @@ echo  yiier\rbac\widgets\SpuerMenu::widget(
                 'label' => Yii::t('app', 'Create Product'), 
                 'icon' => 'plus', 
                 'url' => ['/product/create'], 
-                'strict' => true
+                'strict' => true // 严格模式
             ],
             \Yii::$app->getModule('rbac')->getInstance()->getItems() // add menu
         ]
@@ -217,4 +217,4 @@ echo  yiier\rbac\widgets\SpuerMenu::widget(
 
 > [Get√Yii](https://getyii.com/)
 <i>Web development has never been so fun!</i>
-[www.getyii.com](https://getyii.com/)
+[https://getyii.com/](https://getyii.com/)
