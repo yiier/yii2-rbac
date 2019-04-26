@@ -177,7 +177,6 @@ class SuperMenu extends Menu
                 $active = true;
             }
         }
-//        pr($items, 0);
         return array_values($items);
     }
 
@@ -200,21 +199,15 @@ class SuperMenu extends Menu
             }
 
             $route = ltrim($route, '/');
-            if (isset($item['strict']) && $item['strict'] === true) {
+            $arrayRoute = explode('/', $route);
+            $routeCount = count($arrayRoute);
+            if ((isset($item['strict']) && $item['strict'] === true) || $routeCount == 2) {
                 if ($route != $this->route && $route !== $this->noDefaultRoute && $route !== $this->noDefaultAction) {
                     return false;
                 }
             } else {
-                $arrayRoute = explode('/', $route);
                 $arrayThisRoute = explode('/', $this->route);
-
-                //改写了路由的规则，是否高亮判断到controller而非action
-                $routeCount = count($arrayRoute);
-                if ($routeCount == 2) {
-                    if ($arrayRoute[0] !== $arrayThisRoute[0]) {
-                        return false;
-                    }
-                } elseif ($routeCount == 3) {
+                if ($routeCount == 3) {
                     if ($arrayRoute[0] !== $arrayThisRoute[0]) {
                         return false;
                     }

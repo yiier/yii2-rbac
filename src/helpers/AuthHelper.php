@@ -9,6 +9,7 @@ namespace yiier\rbac\helpers;
 
 
 use Yii;
+use yii\base\Action;
 use yii\caching\TagDependency;
 use yii\helpers\Url;
 use yii\web\User;
@@ -21,10 +22,11 @@ class AuthHelper
     /**
      * @param $route
      * @param User|null $user
+     * @param Action|null $action
      * @return bool
      * @throws \yii\base\InvalidConfigException
      */
-    public static function canRoute($route, User $user = null)
+    public static function canRoute($route, User $user = null, $action = null)
     {
         $userId = $user ? $user->getId() : Yii::$app->getUser()->getId();
         if ($userId == Config::instance()->superManId) {
@@ -35,9 +37,60 @@ class AuthHelper
         if (substr($baseRoute, 0, 4) === "http") {
             return true;
         }
+
+        if (self::isFreeAccess($baseRoute, $action)) {
+            return true;
+        }
+
         $routesByUser = static::getRoutesByUser($userId);
         return self::isRouteAllowed($baseRoute, $routesByUser);
     }
+
+    /**
+     * CCheck if controller has $freeAccess = true or $action in $freeAccessActions
+     * Or it's login, logout, error page
+     *
+     * @param string $route
+     * @param Action|null $action
+     *
+     * @return bool
+     * @throws \yii\base\InvalidConfigException
+     */
+    private static function isFreeAccess($route, $action = null)
+    {
+        if ($action) {
+            $controller = $action->controller;
+            if ($controller->hasProperty('freeAccess') AND $controller->freeAccess === true) {
+                return true;
+            }
+            if ($controller->hasProperty('freeAccessRoutes') AND in_array($action->id, $controller->freeAccessRoutes)) {
+                return true;
+            }
+        }
+        $systemPages = [
+            '/site/logout',
+            AuthHelper::unifyRoute(Yii::$app->errorHandler->errorAction),
+            AuthHelper::unifyRoute(Yii::$app->user->loginUrl),
+        ];
+        if (in_array($route, $systemPages)) {
+            return true;
+        }
+        // if config freeAccessRoutes parameter
+        foreach (Config::instance()->freeAccessRoutes as $freeAccessRoute) {
+            if (substr($freeAccessRoute, -1) === '*') {
+                $freeAccessRoute = rtrim($freeAccessRoute, "*");
+                if ($freeAccessRoute === '' || strpos($route, $freeAccessRoute) === 0) {
+                    return true;
+                }
+            } else {
+                if ($freeAccessRoute === $route) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 
     /**
      * @return array

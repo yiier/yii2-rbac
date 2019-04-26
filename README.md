@@ -96,7 +96,6 @@ php yii migrate --migrationPath=@yii/rbac/migrations/
 ],
 'as access' => [
     'class' => 'yiier\rbac\components\AccessControl',
-    // 'allowActions' => ['site/login', 'site/error', 'site/captcha', 'order/*'] //白名单
 ],
 ```
 
@@ -108,6 +107,7 @@ php yii migrate --migrationPath=@yii/rbac/migrations/
 'yiier.rbac.config' => [
     'cacheDuration' => 3600, // 缓存时间，默认是 30 天，单位是秒
     'superManId' => 12 //拥有所有权限
+    'freeAccessRoutes' => ['/site/login', '/site/error', '/site/captcha', '/order/*'], // 白名单 URL
 ]
 ```
 

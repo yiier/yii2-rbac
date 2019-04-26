@@ -11,6 +11,17 @@ namespace yiier\rbac\helpers;
 use Yii;
 use yii\helpers\ArrayHelper;
 
+/**
+ * Class Config
+ *
+ * 'yiier.rbac.config' => [
+ *     'cacheDuration' => 3600,
+ *     'freeAccessRoutes' => ['/site/login', '/site/error', '/site/captcha', '/order/*'],
+ *     'superManId' => 12
+ * ]
+ *
+ * @package yiier\rbac\helpers
+ */
 class Config
 {
     const CACHE_TAG = 'yiier.rbac';
@@ -18,6 +29,7 @@ class Config
 
     public $menus = [];
     public $superManId;
+    public $freeAccessRoutes = [];
     public $cacheDuration = 3600 * 30; // default 30 day
 
     /**
