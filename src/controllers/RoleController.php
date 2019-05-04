@@ -10,10 +10,14 @@ use yiier\rbac\helpers\AuthHelper;
 use yiier\rbac\helpers\Pinyin;
 use yiier\rbac\models\AuthItem;
 use yiier\rbac\models\AuthItemSearch;
+use yiier\rbac\Module;
 
 
 class RoleController extends Controller
 {
+    /**
+     * @var  \yii\rbac\ManagerInterface
+     */
     public $auth;
 
     public function init()
@@ -37,7 +41,7 @@ class RoleController extends Controller
     }
 
     /**
-     * 添加角色
+     * @title 添加角色
      * @return mixed
      * @throws \Exception
      */
@@ -58,7 +62,7 @@ class RoleController extends Controller
     }
 
     /**
-     * 更新角色
+     * @title 更新角色
      * @param $name
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException
@@ -80,20 +84,7 @@ class RoleController extends Controller
     }
 
     /**
-     * Displays a single AuthItem model.
-     * @param string $name
-     * @return mixed
-     * @throws NotFoundHttpException
-     */
-    public function actionView($name)
-    {
-        return $this->render('view', [
-            'model' => $this->findRole($name),
-        ]);
-    }
-
-    /**
-     * @title 角色下的 所有用户
+     * @title 管理角色下的所有用户
      * @param $name
      * @return string
      */
@@ -114,7 +105,7 @@ class RoleController extends Controller
     }
 
     /**
-     * @title 分配用户角色
+     * @title 给角色分配用户
      */
     public function actionAssign()
     {
@@ -146,7 +137,7 @@ class RoleController extends Controller
     }
 
     /**
-     * @title 角色下的 所有权限
+     * @title 管理角色下的所有权限
      * @param $name
      * @return string
      */
@@ -170,7 +161,7 @@ class RoleController extends Controller
 
 
     /**
-     * @title 分配用户权限
+     * @title 给角色分配权限
      */
     public function actionAssignPermissions()
     {
@@ -225,7 +216,12 @@ class RoleController extends Controller
     public function actionDelete($name)
     {
         $role = $this->findRole($name);
-        if ($this->auth->remove($role)) {
+        if (Module::getInstance()->safeDelete && $this->auth->getUserIdsByRole($name)) {
+            Yii::$app->session->setFlash(
+                'error',
+                Yii::t('rbac', 'Delete role error, There are already users under this role.')
+            );
+        } elseif ($this->auth->remove($role)) {
             Yii::$app->session->setFlash('success', Yii::t('rbac', 'Delete success'));
         }
         return $this->redirect(['index']);

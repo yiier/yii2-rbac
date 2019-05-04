@@ -16,6 +16,7 @@ return [
     'RBAC' => '权限系统',
     'Setting' => '设置',
     'Click{name}, background color change after says it has chosen' => '点击{name}，背景色变化之后表示已经选中',
+    'Delete role error, There are already users under this role.' => '删除角色失败，这个角色下面已经有用户了。',
     'Permission' => '权限',
     'Permissions List' => '权限列表',
     'Please select need to accept access control functions.' => '请选择需要接受权限控制的功能。',

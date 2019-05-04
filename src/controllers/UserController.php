@@ -34,7 +34,7 @@ class UserController extends Controller
     }
 
     /**
-     * Lists all Assignment models.
+     * @title 用户列表
      * @return mixed
      */
     public function actionIndex()
@@ -62,7 +62,7 @@ class UserController extends Controller
     }
 
     /**
-     * Displays a single Assignment model.
+     * @title 用户所有权限
      * @param  integer $id
      * @return mixed
      * @throws NotFoundHttpException

@@ -12,6 +12,7 @@ class Module extends \yii\base\Module
     public $ignoreModules = ['gii', 'debug'];
     public $menus = [];
     public $rulesPath = [];
+    public $safeDelete = true;
 
     public $isAdvanced = false;
     public $advancedConfigs = [
@@ -90,6 +91,7 @@ class Module extends \yii\base\Module
                     'label' => $this->menus['rules'],
                     'url' => ['/rbac/rule/index'],
                     'icon' => 'fa fa-user',
+                    'visible' => (bool)$this->rulesPath
                 ],
             ],
         ];

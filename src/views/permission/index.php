@@ -58,7 +58,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                                     ArrayHelper::map(AuthRule::find()->all(), 'name', 'name'),
                                                     [
                                                         'prompt' => Yii::t('rbac', 'Please select rule'),
-                                                        'class' => 'permission-action-rule_name'
+                                                        'class' => 'permission-action-rule_name' . (Module::getInstance()->rulesPath ? '' : ' hidden')
                                                     ]
                                                 ) ?>
                                             </label>
