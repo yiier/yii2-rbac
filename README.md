@@ -48,6 +48,7 @@ return [
             //    'rules' =>'Rules',
             // ],
             // 'safeDelete' => false, // 默认为 true，当为 true 时，角色有用户时，不能直接删除角色，要先去掉角色的所有用户
+            // 'rulesPath' => ['@app/rbac/rules'], // rules 路径
             // 'userClassName' => 'app\models\User',
             // 'idField' => 'id',
             // 'usernameField' => 'shop_name',
