@@ -69,7 +69,7 @@ class AccessControl extends \yii\base\ActionFilter
     public function beforeAction($action)
     {
         $user = $this->getUser();
-        if ((!$user->getIsGuest()) && AuthHelper::canRoute(Yii::$app->getRequest()->url, $user, $action)) {
+        if (AuthHelper::canRoute(Yii::$app->getRequest()->url, $user, $action)) {
             return true;
         }
         $this->denyAccess($user);
