@@ -107,8 +107,8 @@ php yii migrate --migrationPath=@yii/rbac/migrations/
 
 ```php
 'yiier.rbac.config' => [
-    'cacheDuration' => 3600, // 缓存时间，默认是 30 天，单位是秒
-    'superManId' => 12 //拥有所有权限
+    'cacheDuration' => 3600, // 缓存时间，单位是秒。默认是 30 天
+    'superManId' => 12 // 拥有所有权限的用户 ID
     'freeAccessRoutes' => ['/site/login', '/site/signup', '/site/error', '/site/captcha', '/site/logout', '/order/*'], // 白名单 URL
 ]
 ```
