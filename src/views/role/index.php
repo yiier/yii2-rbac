@@ -37,7 +37,6 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 <?php ActiveForm::end(); ?>
 
-
 <?= \yii\grid\GridView::widget([
     'dataProvider' => $dataProvider,
     'layout' => "{items}\n{summary}\n{pager}",
@@ -52,7 +51,7 @@ $this->params['breadcrumbs'][] = $this->title;
         [
             'header' => Yii::t('rbac', 'Actions'),
             'class' => 'yiier\rbac\widgets\ActionColumn',
-            'template' => '{update} {assign-permissions}  {assign-user} {delete}',
+            'template' => '<div class="table-action">{update} {assign-permissions}  {assign-user} {delete}</div>',
             'buttons' => [
                 // 自定义按钮
                 'assign-user' => function ($url, $model, $key) {
@@ -107,6 +106,5 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ],
 ]); ?>
-
 
 <?php $this->endContent() ?>

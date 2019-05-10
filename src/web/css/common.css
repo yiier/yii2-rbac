@@ -37,7 +37,7 @@ input[type=checkbox], input[type=radio] {
 }
 
 .checkbox, .radio {
-    margin-bottom: 0px;
+    margin-bottom: 0;
 }
 
 .input-small {
@@ -47,7 +47,7 @@ input[type=checkbox], input[type=radio] {
 div.search-outline {
     padding: 10px;
     border-radius: 4px;
-    margin: 0px 0px 12px 0px;
+    margin: 0 0 12px 0;
     border: 1px solid #e1e1e1;
     background-color: #FAFAFA;
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);
@@ -69,8 +69,7 @@ div.search-box .btn {
 }
 
 ul.u-list {
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
     list-style: none;
     font-size: 14px;
     padding: 2px 20px;
@@ -90,8 +89,7 @@ ul.u-list li {
 }
 
 ul.user-list {
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
     list-style: none;
     font-size: 14px;
     padding: 10px 20px;
@@ -121,4 +119,8 @@ ul, ol, li {
 
 .show {
     display: block;
+}
+
+.table-action {
+    white-space: nowrap;
 }
