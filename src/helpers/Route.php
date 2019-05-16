@@ -122,7 +122,7 @@ class Route
                 foreach ($classNames as $key => $className) {
                     $controllerNamespace = $controllers . '\\' . $className . 'Controller';
                     $className = self::uper2lower($className);
-                    $prefix = $firstPrefix . $className;
+                    $prefix = self::uncamelize($firstPrefix) . $className;
                     $classMethods = self::getClassMethods($controllerNamespace, $prefix);
                     $classMethods ? $actions[$appId . $firstPrefix . $className] = $classMethods : null;
                 }
@@ -231,5 +231,16 @@ class Route
         if (Yii::$app->cache !== null) {
             TagDependency::invalidate(Yii::$app->cache, self::CACHE_TAG);
         }
+    }
+
+    /**
+     * 驼峰命名转横杠命名
+     * @param $camelCaps
+     * @param string $separator
+     * @return string
+     */
+    public static function uncamelize($camelCaps, $separator = '-')
+    {
+        return strtolower(preg_replace('/([a-z])([A-Z])/', "$1" . $separator . "$2", $camelCaps));
     }
 }
