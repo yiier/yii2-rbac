@@ -163,8 +163,7 @@ class Route
         $methods = $class->getMethods(\ReflectionMethod::IS_PUBLIC);
         foreach ($methods as $method) {
             $name = $method->getName();
-            if ($method->class == $controller &&
-                !$method->isStatic() &&
+            if (!$method->isStatic() &&
                 strpos($name, 'action') === 0 &&
                 $name !== 'actions'
             ) {
