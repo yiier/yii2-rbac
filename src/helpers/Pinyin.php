@@ -83,7 +83,9 @@ VALUE;
             return '';
         } else {
             foreach ($data as $k => $v) {
-                if ($v <= $num) break;
+                if ($v <= $num) {
+                    break;
+                }
             }
             return $k;
         }
@@ -107,15 +109,17 @@ VALUE;
             $str .= chr(0x80 | $c >> 6 & 0x3F);
             $str .= chr(0x80 | $c & 0x3F);
         }
-        return iconv('UTF-8', 'GB2312', $str);
+        return mb_convert_encoding('UTF-8', 'GB2312', $str);
     }
 
     public static function arrayCombine()
     {
-
+        $res = [];
         $key = explode('|', self::trimspace(self::KEY));
         $value = explode('|', self::trimspace(self::VALUE));
-        if (PHP_VERSION >= '5.0') return array_combine($key, $value);
+        if (PHP_VERSION >= '5.0') {
+            return array_combine($key, $value);
+        }
 
         for ($i = 0; $i < count($key); $i++) {
             $res[$key[$i]] = $value[$i];
@@ -125,9 +129,8 @@ VALUE;
 
     public static function trimspace($str)//删除空格
     {
-        $space = array(" ", "\t", "\n", "\r");
-        $replace = array("", "", "", "");
+        $space = [" ", "\t", "\n", "\r"];
+        $replace = ["", "", "", ""];
         return str_replace($space, $replace, $str);
     }
-
 }

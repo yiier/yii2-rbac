@@ -43,25 +43,27 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <ul>
                                     <?php foreach ($val as $k => $v): ?>
                                         <li>
-                                            <label>
+                                            <label class="permission-action-label">
                                                 <input name="action" value="<?= $k ?>"
                                                        type="checkbox" <?= ($v['check']) ? 'checked' : ''; ?>
                                                        class="permission-action permission-name">
                                                 <?= $v['action'] ?>
+                                            </label>
+                                            <label class="permission-action-des-label">
                                                 <input type="text"
                                                        class="permission-action-des"
                                                        placeholder="<?= Yii::t('rbac', 'Permission Name') ?>"
                                                        value="<?= $v['des'] ?>">
-                                                <?= \yii\helpers\Html::dropDownList(
-                                                    'rule_name',
-                                                    $v['rule_name'],
-                                                    ArrayHelper::map(AuthRule::find()->all(), 'name', 'name'),
-                                                    [
-                                                        'prompt' => Yii::t('rbac', 'Please select rule'),
-                                                        'class' => 'permission-action-rule_name' . (Module::getInstance()->rulesPath ? '' : ' hidden')
-                                                    ]
-                                                ) ?>
                                             </label>
+                                            <?= \yii\helpers\Html::dropDownList(
+                                                'rule_name',
+                                                $v['rule_name'],
+                                                ArrayHelper::map(AuthRule::find()->all(), 'name', 'name'),
+                                                [
+                                                    'prompt' => Yii::t('rbac', 'Please select rule'),
+                                                    'class' => 'permission-action-rule_name' . (Module::getInstance()->rulesPath ? '' : ' hidden')
+                                                ]
+                                            ) ?>
                                         </li>
                                     <?php endforeach; ?>
                                 </ul>
