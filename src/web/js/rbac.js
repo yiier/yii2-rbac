@@ -18,7 +18,7 @@ $(function () {
 
     // 添加 权限描述
     $('.permission-action-des').blur(function () {
-        var permission = $(this).parent().find('.permission-name');
+        var permission = $(this).parent().siblings('.permission-action-label').find('.permission-name');
         var action = permission.val();
         var des = $(this).val();
         var rule_name = $(this).parent().find(".permission-action-rule_name").val();
@@ -28,7 +28,7 @@ $(function () {
 
     // 添加 rule path
     $('.permission-action-rule_name').change(function () {
-        var permission = $(this).parent().find('.permission-name');
+        var permission = $(this).siblings('.permission-action-label').find('.permission-name');
         var action = permission.val();
         var des = $(this).parent().find(".permission-action-des").val();
         var rule_name = $(this).parent().find(".permission-action-rule_name").val();
