@@ -109,7 +109,7 @@ VALUE;
             $str .= chr(0x80 | $c >> 6 & 0x3F);
             $str .= chr(0x80 | $c & 0x3F);
         }
-        return mb_convert_encoding('UTF-8', 'GB2312', $str);
+        return mb_convert_encoding($str, 'UTF-8', 'ISO-8859-1');
     }
 
     public static function arrayCombine()
